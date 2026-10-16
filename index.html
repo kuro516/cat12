@@ -93,7 +93,24 @@ button:focus-visible,.spot:focus-visible{outline:2px solid var(--lamp);outline-o
 @keyframes favhit{0%,100%{background:var(--bg2)}30%{background:#3a1f1b}}
 @media (prefers-reduced-motion:reduce){#favor.hit{animation:none}}
 /* dialog */
-#dialog{position:relative;flex:none;min-height:150px;max-height:176px;overflow-y:auto;padding:4px 16px 10px;cursor:pointer}
+.overlay.top{padding:0;background:#060b0c;align-items:flex-start}
+.top-in{width:100%}
+.top-pic{position:relative;width:100%;aspect-ratio:1/1;max-height:68dvh;overflow:hidden;background:#0a1113}
+.top-pic img{display:block;width:100%;height:100%;object-fit:cover}
+.top-pic.noimg{aspect-ratio:auto;height:14dvh}
+.top-fade{position:absolute;left:0;right:0;bottom:0;height:8%;background:linear-gradient(to bottom,rgba(6,11,12,0),#060b0c)}
+.top-body{position:relative;margin-top:18px;padding:0 22px calc(26px + env(safe-area-inset-bottom,0px));text-align:center}
+.top-kick{margin:0;font:700 11px/1 var(--f-ui);letter-spacing:.4em;color:var(--lamp)}
+.top-title{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.top-copy{margin:0 0 20px;font:500 13px/1.9 var(--f-serif);color:#b3c0bd}
+.top .btn{background:var(--lamp);color:#1a1208}
+.top .btn2{margin-top:10px;background:none;color:var(--lamp);border:1.5px solid var(--lamp)}
+.top .best{color:#8d7c58}
+.qgoal{margin-top:6px;font-size:12.5px;line-height:1.6;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{padding:3px 9px;border:1px solid var(--line);border-radius:12px;font-size:12px;color:var(--muted)}
+.chip.on{color:var(--lamp);border-color:var(--lamp-dim)}
+#dialog{position:relative;flex:none;min-height:200px;overflow-y:auto;padding:4px 16px 10px;cursor:pointer}
 .askline{font-size:12px;line-height:1.5;color:var(--muted);min-height:18px;padding-bottom:4px}
 .who{font:700 11px/1 var(--f-ui);letter-spacing:.3em;color:var(--lamp);margin-bottom:4px;min-height:11px}
 .said{font:500 17px/1.75 var(--f-serif);text-wrap:pretty}
@@ -229,7 +246,7 @@ button:focus-visible,.spot:focus-visible{outline:2px solid var(--lamp);outline-o
 .pro-skip{height:48px;padding:0 16px;background:none;border:1px solid var(--line);border-radius:3px;color:var(--muted);font-size:13px}
 .pro-next{flex:1;height:48px;border:0;border-radius:3px;background:var(--lamp);color:var(--ink);font:700 16px var(--f-serif);letter-spacing:.2em}
 @media (prefers-reduced-motion:reduce){.pro-text p{animation:none}}
-@media (max-height:640px){#dialog{min-height:136px}.said{font-size:16px}}
+@media (max-height:640px){#dialog{min-height:186px}.said{font-size:16px}}
 @media (prefers-reduced-motion:reduce){
   #room,#head{transition:none}
   #room .glow,.spot .ring,.row.final:not(:disabled){animation:none}
@@ -363,13 +380,22 @@ button:focus-visible,.spot:focus-visible{outline:2px solid var(--lamp);outline-o
           <li>五つの嘘をすべて崩すと、何かが変わる。</li>
         </ul>
         <button class="btn" id="startBtn">取調べを始める</button>
-        <button class="btn btn2" id="resumeBtn" hidden>つづきから</button>
-        <p class="best">途中経過は、この端末のブラウザに自動で保存されます。</p>
-        <p class="best" id="bestLine" hidden></p>
       </div>
     </div>
   </div>
 
+  <div id="top" class="overlay top">
+    <div class="top-in">
+      <div class="top-pic"><img id="topImg" src="00.png" alt="取調室のシャーロック・ホームズ" onerror="this.parentNode.classList.add('noimg');this.remove()"><span class="top-fade"></span></div>
+      <div class="top-body">
+        <h1 class="top-title">容疑者シャーロック・ホームズ</h1>
+        <button class="btn" id="topStart">はじめる</button>
+        <button class="btn btn2" id="resumeBtn" hidden>つづきから</button>
+        <p class="best" id="bestLine" hidden></p>
+        <p class="best">途中経過は、この端末のブラウザに自動で保存されます。</p>
+      </div>
+    </div>
+  </div>
   <div id="prologue" class="overlay pro" hidden>
     <div class="pro-card">
       <div class="pro-no" id="proNo"></div>
@@ -449,7 +475,7 @@ var ST={
     brk:'……夫人は妹さんの家だったのか。それは知らなかった。そう、月曜にダン氏という男が来たそうだ。名刺は見たが、迷い犬の件など些末だと片づけてしまった。見立てを誤ったと認めるのが癪で、黙っていたのさ。',
     again:'それ以上は知らん。夫人の留守を知らなかったのは、私の落ち度だ。'},
   ret:{tag:'帰宅後',ev:'e5',q:'帰宅してから朝までのことを教えてください。',
-    lie:'戻ってすぐ寝室に入った。居間には足を踏み入れていない。',
+    lie:'寝室に入った。居間には足を踏み入れていない。',
     brk:'……灰皿の灰が語ったか。零時五十分に帰って、居間で男が冷たくなっているのを見つけた。懐の名刺入れで、ヴァンス氏だと分かった。罠だと一目で分かった。警官に踏み荒らされる前に、夜明けまで現場を読んだ。通報しなかったのは、私の我儘だ。サイドボードの前の黒い泥と紫の花弁も、その時に見た。',
     again:'現場を調べたことは認めた。それ以上、隠してはいない。'}
 };
@@ -461,7 +487,7 @@ var CX={
    {t:'昨夜のことを、順に聞かせてください。',r:'順に、か。君は右の袖口ばかり気にしているね。緊張しているなら遠慮はいらない。いいだろう、順に話そう。'},
    {t:'昨夜どこにいたか、正直に話すなら今のうちです。',r:'「今のうち」とは取調べ室の常套句だ。残念ながら、私には話すことしかできない。聞きたまえ。'},
    {t:'あなたのような人が、昨夜は大人しく家にいたとは思えない。',r:'ほう、挑発かね。悪くない。だが挑発に乗って口を滑らせるのは素人のやることだ。……話そう。'}],
-  lines:['昨夜は夕食のあと、実験台に向かった。塩化物の結晶が針状に伸びていくのを観察していてね。','九時過ぎには火を落として、椅子に座り、パイプを三服した。','それから朝まで、一歩も外へは出ていない。霧の晩に出歩く趣味はないのでね。','霧が深くて、窓の外は静かなものだった。アリバイとは、えてして孤独なものだよ。'],
+  lines:['昨夜は夕食のあと、実験台に向かった。塩化物の結晶が針状に伸びていくのを観察していてね。','九時過ぎには実験の火を落として、椅子に座り、パイプを三服した。','それから朝まで、一歩も外へは出ていない。霧の晩に出歩く趣味はないのでね。','霧が深くて、窓の外は静かなものだった。アリバイとは、えてして孤独なものだよ。'],
   press:['結晶の話か。見ていて飽きない。君にも見せてやりたいね。','三服。三服で考えは一つまとまる。もっとも、まとまった考えは、事件に追い抜かれていたが。','一歩も、だ。念を押すのは疑われる側の礼儀だろう。……ただし、街の目は思ったより多いものだよ。','孤独なアリバイは疑われる。だが、嘘のアリバイよりは、まだ正直だと思わないかね。']},
  know:{li:1,
   open:[
@@ -489,12 +515,29 @@ var CX={
    {t:'帰宅してからの行動を教えてください。',r:'帰宅後。眠い者の習慣など、聞いても面白くないと思うが。'},
    {t:'遺体を最初に見たのは、あなたですか。',r:'最初に？ 朝まで誰も居間に入っていないなら、最初は夫人だろうね。'},
    {t:'居間に入らなかったと言い切れますか。',r:'言い切るも何も、事実だ。君は事実を疑うのが仕事のようだが。'}],
-  lines:['零時五十分に戻った。霧のせいで馬車が遅れてね。','戻ってすぐ寝室に入った。居間には足を踏み入れていない。','君は、馬車の遅れまで調べるつもりかね。'],
-  press:['馬車が遅れたのは霧のせいだ。御者を責めるのは酷だよ。','寝室だ。着替えもせずに眠ったとも。居間には入っていない。……何度言わせる。','馬車の遅れは、霧と御者の問題だ。私の問題ではない。']}
+  lines:['夜更けのことだ。時刻までは覚えていない。','寝室に入った。居間には足を踏み入れていない。','君は、私の就寝時刻まで調べるつもりかね。'],
+  press:['眠い頭に、時計は要らない。','寝室だ。着替えもせずに眠ったとも。居間には入っていない。……何度言わせる。','就寝の時刻は、事件の時刻ではない。私の問題ではないよ。']}
 };
 Object.keys(CX).forEach(function(k){ST[k].cx=CX[k]});
 var CXWRONGLINE='その証拠は、この件に関わっている。だが、この一文には当たらない。矛盾は、別の一文にあるはずだ。';
 var REPEAT=['さっき答えたとおりだ。何度聞かれても同じだよ。','同じことばかり聞くんだな。答えは変わらんぞ。','……その質問は、もう済んだはずだ。'];
+var WRONGBY={
+ e1:'夜警の記録は、昨夜の家の出入りを語る。この一文が問題にしているのは、そこではない。',
+ e2:'索引帳は、私が商会に関心を持っていた証拠だ。この一文とは、触れ合わない。',
+ e3:'薬品棚の棚卸しは、棚の中身の記録だ。この一文は、棚の話ではない。',
+ e4:'夫人の供述書は、月曜の来客と夫人の留守を語る。この一文には、触れていない。',
+ e5:'現場検証報告は、居間の状況を語る。この一文は、居間の話ではない。',
+ e6:'検死報告は、被害者がどう死んだかを語る。私の言葉の真偽には、直接触れない。',
+ e8:'フィンチ君の供述書は、商会の内輪と被害者の人となりだ。私の言葉と食い違う点は、ここにはない。',
+ e9:'偽の呼び出し状は、私が外へ出た経緯を語る。この一文とは、触れ合わない。',
+ e10:'被害者の靴底の泥は、被害者がどこを歩いたかを語る。私の言葉とは関わらない。',
+ e11:'保険の契約記録は、被害者側の事情だ。私の言葉とは関わらない。',
+ e12:'投書は、警察が動いたきっかけだ。この一文の真偽には、触れていない。'
+};
+function wrongFor(id,k){
+  if(id==='e8'&&k==='know')return '探偵風の男が商会を聞いて回った、か。それが私だと示す材料は、その紙にはない。私の記録の中に、つながるものがあるかもしれないがね。';
+  return WRONGBY[id]||WRONG[Math.floor(Math.random()*WRONG.length)];
+}
 var WRONG=['それは今の話とは噛み合わないよ。紙切れは、順序よく並べてこそ口を利く。','ほう、その紙切れで何を言いたいのかね。今の供述とは繋がらないが。','材料は悪くない。だが、鍋を間違えているようだ。'];
 
 var EV=[
@@ -755,7 +798,7 @@ var STEPS=[
    {src:'',ev:'e2',text:'ホームズは二か月前から商会を調べていた',ok:true,pre:'私の索引帳は、彼の警戒の理由であり、私を選んだ理由でもある。'},
    {src:'',ev:'e10',text:'被害者の靴底に黒い泥炭質の土が付いていた',ok:false,reply:'泥は、誰が現場を訪れたかを示す。なぜ死んだか、なぜ私を選んだかは示さない。'}
   ],
-  react:['君の選んだ事実は、答えの全部ではない。だが、鎖の重要な一環だ。そこに、他の事実を重ねていこう。','横領が暴かれれば、監獄と家族の恥だ。だが、他殺で死ねば、横領は死者の罪として闇に消え、保険金は家族に届く。','そして彼は、もう一つ付け加えた。商会を嗅ぎ回っていた私を、犯人に仕立てること。毒の量だけで自殺とは断定できない。だが、温室の痕跡と保険の契約を重ねれば、彼が自分の死まで計画に組み込んでいたと考えられる。確実に死ぬための量だったのだろう。','成功の見込みは、高くなかった。だが、横領の露見は目前で、クロス君は私に相談しようとしていた。普通に逃げても破滅する。死は、彼に残された最後の取引だったのだ。','彼にとって私は、自殺を見破れる唯一の男だった。クロス君が私に相談すれば、横領も偽装も暴かれる。だから先に、私を犯人にして、私の言葉を無価値にした。','共同経営者のクロス君に罪を着せなかったのは、警察が帳簿を洗えば横領が露見するからだ。私なら、帳簿から目を逸らせる。','ただし、この計画は、誰も真相に気づかないことが前提だった。彼の誤算は、犠牲に選んだ相手が、私だったことだよ。'],
+  react:['横領が暴かれれば、監獄と家族の恥だ。だが、他殺で死ねば、横領は死者の罪として闇に消え、保険金は家族に届く。','そして彼は、もう一つ付け加えた。商会を嗅ぎ回っていた私を、犯人に仕立てること。毒の量だけで自殺とは断定できない。だが、温室の痕跡と保険の契約を重ねれば、彼が自分の死まで計画に組み込んでいたと考えられる。確実に死ぬための量だったのだろう。','成功の見込みは、高くなかった。だが、横領の露見は目前で、クロス君は私に相談しようとしていた。普通に逃げても破滅する。死は、彼に残された最後の取引だったのだ。','彼にとって私は、自殺を見破れる唯一の男だった。クロス君が私に相談すれば、横領も偽装も暴かれる。だから先に、私を犯人にして、私の言葉を無価値にした。','共同経営者のクロス君に罪を着せなかったのは、警察が帳簿を洗えば横領が露見するからだ。私なら、帳簿から目を逸らせる。','ただし、この計画は、誰も真相に気づかないことが前提だった。彼の誤算は、犠牲に選んだ相手が、私だったことだよ。'],
   note:'動機は、横領の露見と保険金。自分の死を他殺に偽装し、自殺を見破れるホームズに罪を着せる最後の計画。',upd:['e11','e6','e2']}
 ];
 
@@ -768,6 +811,32 @@ STEPS[2].opts.push({src:'',ev:'e4',text:'予備の鍵が見当たらなくなっ
 STEPS[8].opts.push({src:'',ev:'e8',text:'クロスは「ホームズに相談する」と話していた',ok:true,pre:'そこだ。彼にとって、私は最も危険な相談相手だった。'});
 STEPS[8].opts.push({src:'',ev:'x4',text:'ヴァンスの財布に現金十二ポンドが残っていた',ok:false,reply:'財布は、盗られていないことを示すだけだ。なぜ死んだか、なぜ私を選んだかは語らない。'});
 STEPS[6].opts.push({src:'',ev:'e8',text:'ヴァンスは普段は髭を剃っている',ok:true,pre:'普段は髭のない男が、頬髯をつけて現れた。……付け髭だ。'});
+
+(function(){
+ var Q=[
+  ['呼び出し状の「S.H.」は、本当にホームズの手で書かれたのか。','字の特徴から、書いた人の手の癖が分かる事実を選ぶ。'],
+  ['ハドソン夫人が木曜に留守にすることを、手紙の送り主はどうやって知ったのか。','夫人の予定を知る機会があった人物を示す事実を選ぶ。'],
+  ['ホームズを外へ誘い出した者と、その直後に家へ入った傘の男は、つながっているのか。','二つの出来事が、同じ計画の一部だと分かる事実を選ぶ。'],
+  ['凶器の毒は、ホームズの薬品棚から持ち出されたものなのか。','毒が棚から来ていないと分かる事実を選ぶ。'],
+  ['現場に落ちていた泥と花弁から、家に入った男の趣味や仕事が見えてこないか。','男の趣味や仕事を示す事実を選ぶ。'],
+  ['ここまでの手がかりに当てはまる人物は、誰か。','いくつもの特徴が、一人の人物に重なると分かる事実を選ぶ。'],
+  ['傘の男が出てから、ヴァンスが入るまでの五分間に、何があったのか。','五分で人が入れ替わったように見える仕掛けを示す事実を選ぶ。'],
+  ['警察は、どうやってホームズの家を調べる場所を知ったのか。','警察が動くきっかけになった物を示す事実を選ぶ。'],
+  ['ヴァンスは、なぜ死ぬ必要があったのか。そして、なぜホームズを選んだのか。','三つの輪を一つずつ掛ける。「死んで得るもの」「死ぬ意志の強さ」「私を選んだ理由」を示す事実を選ぶ。']
+ ];
+ STEPS.forEach(function(st,i){st.q=Q[i][0];st.goal=Q[i][1]});
+})();
+
+(function(){
+ var M={
+  '三週間前に生命保険を二倍にかけ直し、他殺なら全額が家族に支払われる':{cat:'A',give:'保険は、彼が死んで何を得ようとしたかを示す。他殺なら全額。つまり、自殺と見抜かれないことが条件だった。ただし、これは「死んで得るもの」の半分だ。なぜ私なのかは、まだ語らない。'},
+  'クロスが帳簿を調べ、ヴァンスは三日前から様子がおかしかった':{cat:'A',give:'帳簿の穴とクロス君の監査は、彼が何から逃げたかったかを示す。「死んで得るもの」の、もう半分だ。ただし、これだけでは、他殺に見せかける理由までは分からない。'},
+  '毒は致死量の十数倍が検出された':{cat:'B',give:'量は、彼の意志の強さを示す。殺す側なら、これほど入れる必要はない。……いや、量だけで自殺と決めるのは早い。他の輪と重ねて初めて意味を持つ。'},
+  'ホームズは二か月前から商会を調べていた':{cat:'C',give:'二か月前から私に調べられていた。彼が私を警戒した理由は、ここにある。ただし、警戒しただけでは、私を犯人に選ぶ理由にはならない。'},
+  'クロスは「ホームズに相談する」と話していた':{cat:'C',give:'クロス君が私に相談すれば、帳簿も保険も調べられる。彼は、私を放置できなかった。警戒が、行動に変わった瞬間だ。'}
+ };
+ STEPS[8].opts.forEach(function(o){var m=M[o.text];if(m){o.cat=m.cat;o.give=m.give}});
+})();
 var TIMELINE=[
  ['二か月前','ホームズが商会の鉄道債に不審を抱き、索引帳に記す。ヴァンスは、調べられていると察して警戒を始める。','e2 e8'],
  ['三週間前','ヴァンスが、自分の死を他殺に偽装する計画を固め、生命保険を二倍にかけ直す。他殺なら全額が家族に届く。','e11'],
@@ -793,20 +862,61 @@ function pick(a){return a[Math.floor(Math.random()*a.length)]}
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
 
 /* ---------- dialogue ---------- */
+var PG={pages:null,pi:0,narr:false};
+function pagesLeft(){return !!(PG.pages&&PG.pi<PG.pages.length-1)}
+function paginate(text,narr){
+  var sd=$('#said'),w=sd?sd.clientWidth:0;
+  if(!w||text.length<28)return null;
+  var m=document.getElementById('meas');
+  if(!m){m=document.createElement('div');m.id='meas';m.style.cssText='position:absolute;left:16px;top:0;visibility:hidden;pointer-events:none;margin:0';$('#dialog').appendChild(m)}
+  m.className='said'+(narr?' narr':'');m.style.width=w+'px';
+  var lh=parseFloat(getComputedStyle(m).lineHeight)||30;
+  function fits(t){m.textContent=t;return m.getBoundingClientRect().height<=lh*5+2}
+  if(fits(text))return null;
+  var sents=text.match(/[^。！？]+[。！？」）]*|[。！？]+/g)||[text],pages=[],cur='';
+  function split(sn){
+    var parts=sn.match(/[^、]+、?/g)||[sn];
+    parts.forEach(function(q){
+      if(fits(cur+q)){cur+=q;return}
+      if(cur){pages.push(cur);cur=''}
+      if(fits(q)){cur=q;return}
+      for(var i=0;i<q.length;i++){if(!fits(cur+q.charAt(i))){pages.push(cur);cur=''}cur+=q.charAt(i)}
+    });
+  }
+  sents.forEach(function(sn){
+    if(fits(cur+sn)){cur+=sn;return}
+    if(cur){pages.push(cur);cur=''}
+    if(fits(sn))cur=sn;else split(sn);
+  });
+  if(cur)pages.push(cur);
+  return pages.length>1?pages:null;
+}
+function renderWho(){
+  var tag=PG.pages?('▼ '+(PG.pi+1)+' / '+PG.pages.length):'';
+  $('#who').textContent=(PG.narr?'':'ホームズ')+(tag?(PG.narr?'':'　')+tag:'');
+}
+function typeText(t){
+  var sd=$('#said');say.full=t;
+  if(REDUCE){sd.textContent=t;return}
+  var i=0;
+  (function step(){i++;sd.textContent=t.slice(0,i);if(i<t.length)TY=setTimeout(step,24);else TY=null})();
+}
+function advancePage(){
+  if(!pagesLeft())return false;
+  clearTimeout(TY);TY=null;PG.pi++;renderWho();$('#dialog').scrollTop=0;typeText(PG.pages[PG.pi]);
+  renderPanel();return true;
+}
 function say(o){
   clearTimeout(TY);TY=null;
   var full=o.text||'',narr=!!o.narr;
   $('#askLine').textContent=o.ask||'';
-  $('#who').textContent=narr?'':'ホームズ';
   var sd=$('#said');sd.className='said'+(narr?' narr':'');
   var nt=$('#note');
   if(o.note){nt.innerHTML=o.note;nt.hidden=false}else{nt.hidden=true}
   $('#sr').textContent=(o.ask?o.ask+' ':'')+full;
   $('#dialog').scrollTop=0;
-  say.full=full;
-  if(REDUCE){sd.textContent=full;return}
-  var i=0;
-  (function step(){i++;sd.textContent=full.slice(0,i);if(i<full.length)TY=setTimeout(step,24);else TY=null})();
+  PG.narr=narr;PG.pages=paginate(full,narr);PG.pi=0;renderWho();
+  typeText(PG.pages?PG.pages[0]:full);
 }
 function skipTyping(){if(TY){clearTimeout(TY);TY=null;$('#said').textContent=say.full||'';return true}return false}
 
@@ -849,6 +959,7 @@ function readOf(e){var l=S.white[e.id]||0;return l>=2&&e.w2?e.w2:(l>=1?e.white:e
 function askHtml(){
   var h='';
   if(S.play)return '<button class="cont" data-act="next">つづき ▶</button>';
+  if(pagesLeft())return '<button class="cont" data-act="pg">つづき ▶</button>';
   if(S.phase==='act1'){
     var n=brokenN(),cx=S.cx;
     if(cx){
@@ -876,8 +987,10 @@ function askHtml(){
     }
   }else if(S.phase==='act2'&&S.pend){
     var a=S.a2,st=STEPS[a.i];
-    h+='<div class="qcard"><div class="qtag">問い　'+(a.i+1)+' / '+STEPS.length+'</div><div class="qtxt">'+st.q+'</div></div>';
-    h+='<p class="hint">提出する事実を選ぶ。選ぶと、前半の読みを見直せる。証拠・調書のタブで、いつでも見返せる。</p>';
+    var chips='';
+    if(a.i===8){chips='<div class="chips">'+Object.keys(CAT9).map(function(c){return '<span class="chip'+((S.got9||{})[c]?' on':'')+'">'+CAT9[c]+((S.got9||{})[c]?' ✓':'')+'</span>'}).join('')+'</div>'}
+    h+='<div class="qcard"><div class="qtag">問い　'+(a.i+1)+' / '+STEPS.length+'</div><div class="qtxt">'+st.q+'</div><div class="qgoal">'+(st.goal||'')+'</div>'+chips+'</div>';
+    h+='<p class="hint">'+(a.i===8?'事実を一つずつ提出して、三つの輪を掛けていく。':'提出する事実を選ぶ。選ぶと、前半の読みを見直せる。証拠・調書のタブで、いつでも見返せる。')+'</p>';
     a.opts.forEach(function(o,i){
       var tried=a.tried[i],sel=S.sel===i;
       h+='<button class="opt '+(sel?'sel':'')+(tried?' tried':'')+'" data-act="opt" data-i="'+i+'"><span class="src">'+(o.ev?evL(o.ev):o.src)+'</span><span class="q">'+o.text+'</span></button>';
@@ -989,7 +1102,7 @@ function cxPresent(evId){
   }else if(evId==='e7'){
     say({ask:ask,text:'字が私に似ているのは認めよう。だが、私は書いていない。……それは君が自分で気づくことだ。',note:'この証拠は、まだ使いどころではない。'+miss()});
   }else{
-    say({ask:ask,text:pick(WRONG),note:'この一文とは食い違っていない。'+miss()});
+    say({ask:ask,text:wrongFor(evId,cx.k),note:'この一文とは食い違っていない。'+miss()});
   }
   renderPanel();
 }
@@ -1014,7 +1127,7 @@ function useEv(evId,stId){
     say({ask:ask,text:'字が私に似ているのは認めよう。だが、私は書いていない。……それ以上は、君が自分で気づくことだ。容疑者の弁明は、疑われるだけだからね。',note:'食い違いは見つからなかった。'});
   }else{
     S.wrong++;
-    say({ask:ask,text:pick(WRONG),note:'この供述とは食い違っていない。'});
+    say({ask:ask,text:wrongFor(evId,stId),note:'この供述とは食い違っていない。'});
   }
   renderPanel();
 }
@@ -1039,11 +1152,14 @@ function openSheet(id){
   h+='<button class="sh-close" data-act="close">閉じる</button></div>';
   var sh=$('#sheet');sh.innerHTML=h;sh.hidden=false;renderPanel();
 }
-function openSheetPresent(){
+var pickScroll=0;
+function openSheetPresent(keep){
+  if(!keep)pickScroll=0;
   var h='<div class="sheet-card"><div class="sh-q">どの証拠を突きつける？　（タップで中身を確認してから突きつけられる）</div>';
   visibleEv().forEach(function(e){h+='<button class="pick" data-act="pickview" data-ev="'+e.id+'"><span class="tag">証拠'+e.n+'</span><span class="q">'+e.name+'</span><span class="pf">'+e.fact+'</span></button>'});
   h+='<button class="sh-close" data-act="close">やめる</button></div>';
   var sh=$('#sheet');sh.innerHTML=h;sh.hidden=false;
+  var cd=sh.querySelector('.sheet-card');if(cd)cd.scrollTop=pickScroll;
 }
 function closeSheet(){var sh=$('#sheet');sh.hidden=true;sh.innerHTML=''}
 
@@ -1104,6 +1220,25 @@ function askQ(i){
   $('#askLine').textContent='【問い】'+STEPS[i].q;
   renderPanel();
 }
+var CAT9={A:'死んで得るもの',B:'死ぬ意志の強さ',C:'私を選んだ理由'};
+function submit9(o){
+  var st=STEPS[8];S.got9=S.got9||{};
+  var had=!!S.got9[o.cat];S.got9[o.cat]=true;
+  var keys=Object.keys(CAT9),n=keys.filter(function(c){return S.got9[c]}).length;
+  S.pend=false;S.sel=-1;
+  var B=[{t:'h',s:o.pre,ask:'【提出】'+o.text,fx:function(){S.white[o.ev]=Math.min((S.white[o.ev]||0)+1,EVD[o.ev].w2?2:1);if(!had)stampIt('推理',true)}}];
+  B.push({t:'h',s:had?'その輪は、もう掛かっている。別の角度から考えたまえ。':o.give,note:'鎖の輪　'+n+' / 3　'+keys.map(function(c){return CAT9[c]+(S.got9[c]?'✓':'')}).join('　')});
+  if(n<3){
+    var lack=keys.filter(function(c){return !S.got9[c]}).map(function(c){return '「'+CAT9[c]+'」'}).join('と');
+    B.push({t:'h',s:'まだ、'+lack+'が欠けている。それを示す事実を、もう一つ選びたまえ。'});
+    play(B,function(){askQ(8)});
+  }else{
+    B.push({t:'h',s:'三つの輪が揃った。……では、全貌を話そう。'});
+    st.react.forEach(function(r,i){var b={t:'h',s:r};if(i===0)b.fx=function(){S.notes.push(st.note)};B.push(b)});
+    B.push({t:'h',s:'これで鎖は繋がった。全貌を話そう。聞き漏らしのないように。'});
+    play(B,function(){showRecon()});
+  }
+}
 function submit(){
   var a=S.a2,st=STEPS[a.i],o=a.opts[S.sel];
   if(!o)return;
@@ -1113,6 +1248,7 @@ function submit(){
     say({ask:'【提出】'+o.text,text:o.reply,note:'この事実は、問いの答えにどこまで役立つだろう。ホームズの返答から、何が分かり、何がまだ分からないかを考えよう。'+miss()});
     renderPanel();return;
   }
+  if(a.i===8&&o.cat){submit9(o);return}
   S.pend=false;S.sel=-1;
   var B=[];
   if(o.pre)B.push({t:'h',s:o.pre,ask:'【提出】'+o.text});
@@ -1216,7 +1352,7 @@ function resumeGame(){
   clearTimeout(TY);TY=null;
   S=Object.assign(fresh(),o.S);S.play=null;S.sel=-1;
   EV.forEach(function(e){if(o.n&&o.n[e.id])e.n=o.n[e.id]});
-  $('#intro').hidden=true;$('#prologue').hidden=true;$('#recon').hidden=true;$('#ending').hidden=true;closeSheet();
+  $('#top').hidden=true;$('#intro').hidden=true;$('#prologue').hidden=true;$('#recon').hidden=true;$('#ending').hidden=true;closeSheet();
   var late=(S.phase==='act2'||S.phase==='act3');
   setPose(late?'lean':'guard');setPic(late?'02.png':'01.png');playBgm(late?'02.mp3':'01.mp3');
   $('#lbl').textContent=late?'取調室　午後十時':'スコットランド・ヤード';
@@ -1250,11 +1386,12 @@ function runPager(o){
 function proEnd(){$('#prologue').hidden=true;var f=pager.end;pager.end=null;if(f)f()}
 function proStart(){runPager({pages:PRO,label:'事件',last:'取調べを始める',end:begin,cls:''})}
 $('#startBtn').addEventListener('click',function(){playBgm('01.mp3');proStart()});
+$('#topStart').addEventListener('click',function(){playBgm('01.mp3');$('#top').hidden=true});
 $('#resumeBtn').addEventListener('click',resumeGame);
 $('#snd').addEventListener('click',function(e){e.stopPropagation();AU.muted=!AU.muted;try{localStorage.setItem('holmes-mute',AU.muted?'1':'0')}catch(x){}applyMute()});
 $('#proNext').addEventListener('click',function(){if(pager.i>=pager.pages.length-1)proEnd();else{pager.i++;proShow();$('#prologue').scrollTop=0}});
 $('#proSkip').addEventListener('click',proEnd);
-$('#dialog').addEventListener('click',function(){if(skipTyping())return;if(S.play)next()});
+$('#dialog').addEventListener('click',function(){if(skipTyping())return;if(advancePage())return;if(S.play)next()});
 $('#tabs').addEventListener('click',function(e){
   var b=e.target.closest('button[data-tab]');if(!b)return;
   S.tab=b.getAttribute('data-tab');renderPanel();$('#panel').scrollTop=0;
@@ -1263,7 +1400,8 @@ $('#panel').addEventListener('click',function(e){
   var b=e.target.closest('button[data-act]');
   if(!b||b.disabled||S.phase==='intro')return;
   var a=b.getAttribute('data-act'),id=b.getAttribute('data-id');
-  if(a==='next'){if(!skipTyping())next();else{}return}
+  if(a==='next'){if(skipTyping())return;if(advancePage())return;next();return}
+  if(a==='pg'){if(!skipTyping())advancePage();return}
   if(S.play)return;
   if(a==='ask')doAsk(id);
   else if(a==='final'){S.directN=brokenN();startBridge()}
@@ -1285,8 +1423,8 @@ $('#sheet').addEventListener('click',function(e){
   var b=e.target.closest('button[data-act]');if(!b||b.disabled)return;
   var a=b.getAttribute('data-act');
   if(a==='close')closeSheet();
-  else if(a==='pickview')openSheet(b.getAttribute('data-ev'));
-  else if(a==='backpick')openSheetPresent();
+  else if(a==='pickview'){var cd0=$('#sheet .sheet-card');pickScroll=cd0?cd0.scrollTop:0;openSheet(b.getAttribute('data-ev'))}
+  else if(a==='backpick')openSheetPresent(true);
   else if(a==='pick')cxPresent(b.getAttribute('data-ev'));
 });
 $('#recon').addEventListener('click',function(e){
@@ -1306,7 +1444,7 @@ updateSpots();
 renderPanel();
 say({text:'……',narr:true});
 applyMute();
-if(loadSave()){$('#resumeBtn').hidden=false;$('#startBtn').textContent='はじめから'}
+if(loadSave()){$('#resumeBtn').hidden=false;$('#topStart').textContent='はじめから'}
 try{if(localStorage.getItem('holmes-cleared')){var bl=$('#bestLine');bl.textContent='この事件は解決済み';bl.hidden=false}}catch(e){}
 })();
 
