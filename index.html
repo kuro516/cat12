@@ -252,7 +252,8 @@ button:focus-visible,.spot:focus-visible{outline:2px solid var(--lamp);outline-o
 .pro-text p:nth-child(5){animation-delay:3.6s}.pro-text p:nth-child(6){animation-delay:4.5s}.pro-text p:nth-child(7){animation-delay:5.4s}
 .pro-text p:nth-child(2){animation-delay:.9s}.pro-text p:nth-child(3){animation-delay:1.8s}.pro-text p:nth-child(4){animation-delay:2.7s}
 .pro-text em{font-style:normal;color:var(--lamp)}
-.pro-note{margin:0 0 10px;font-size:12px;color:var(--muted);text-align:center;min-height:1em}
+.pro-foot{position:sticky;bottom:-28px;margin-top:auto;padding:14px 0 28px;background:linear-gradient(to bottom,rgba(6,9,10,0),#06090a 22%)}
+.pro-note{margin:0 0 8px;font-size:12px;color:var(--muted);text-align:center;min-height:1em}
 .pro-btns{display:flex;justify-content:space-between;gap:12px}
 .pro-skip{height:48px;padding:0 16px;background:none;border:1px solid var(--line);border-radius:3px;color:var(--muted);font-size:13px}
 .pro-next{flex:1;height:48px;border:0;border-radius:3px;background:var(--lamp);color:var(--ink);font:700 16px var(--f-serif);letter-spacing:.2em}
@@ -415,8 +416,8 @@ button:focus-visible,.spot:focus-visible{outline:2px solid var(--lamp);outline-o
     <div class="pro-card">
       <div class="pro-no" id="proNo"></div>
       <div class="pro-text" id="proText"></div>
-      <p class="pro-note" id="proNote"></p>
-      <div class="pro-btns"><button class="pro-skip" id="proSkip">スキップ</button><button class="pro-next" id="proNext">次へ ▶</button></div>
+      <div class="pro-foot"><p class="pro-note" id="proNote"></p>
+      <div class="pro-btns"><button class="pro-skip" id="proSkip">スキップ</button><button class="pro-next" id="proNext">次へ ▶</button></div></div>
     </div>
   </div>
   <div id="recon" class="overlay" hidden></div>
@@ -1229,7 +1230,7 @@ function startBridge(){
   S.phase='bridge';S.cx=null;
   S.sumNotes=['ホームズの嘘は、すべて「事件に先に気づいていた」ための沈黙だった。','誰かがホームズを誘い出し、その留守に毒を仕込み、被害者を呼んだ。','署名も小瓶のラベルも、ホームズの字に似せたもの。','証拠は揃いすぎている。'];
   renderPanel();
-  runPager({pages:summaryPages(),label:'取調べのまとめ',last:'ホームズの番へ',end:bridgeBeats,cls:'list',note:'スキップしても、調書タブの「事件の整理」と「取調べのまとめを読み返す」から、いつでも読み返せます。'});
+  runPager({pages:summaryPages(),label:'取調べのまとめ',last:'ホームズの番へ',end:bridgeBeats,cls:'list',note:'スキップしても、調書タブから読み返せます。'});
 }
 function bridgeBeats(){
   var q='あなたが犯人にしては、証拠が揃いすぎている。……あなたは、この罠をどこまで見通しているのですか。';
@@ -1277,10 +1278,21 @@ var MID=[
  {at:1,q:'投書の差出人が被害者本人だと言えるのは、なぜか？',o:[['前日夕刻の消印と、左手の字が重なるから',1],['警察が自分で書いたから',0,'警察は、自分たちを導く投書は書かない。'],['ホームズが自分で出したから',0,'私が自分に不利な道案内を書くと思うかね。']]},
  {at:3,q:'ここまでの話で、ヴァンスにとって死とは何だったのか？',o:[['破滅から逃れ、家族に金を残す、最後の取引',1],['衝動的な自殺',0,'衝動ではない。保険も毒の量も、計画の跡だ。'],['ホームズへの復讐',0,'復讐が目的なら、保険は要らない。目的は、逃げることと残すことだ。']]}
 ];
-function midBeat(i){var m=MID[i];return {t:'c',lead:'……ここで、一度確認しよう。',q:m.q,opts:m.o.map(function(x){return {t:x[0],ok:!!x[1],r:x[2]||''}})}}
+var MIDT=[
+ ['……さて、ここまでの手紙の話を、君はどう読む？','そうだ。字は嘘をつかない。'],
+ ['待ちたまえ。先へ進む前に、君の見立てを聞いておこう。','正解だ。茶の湯気の向こうで、話は漏れていた。'],
+ ['一つ、君に尋ねたい。','いい読みだ。点と点が、つながり始めた。'],
+ ['……君ならどう考える？　少し頭を使ってもらおうか。','君の言う通りだ。棚は、何も語っていない。'],
+ ['土と花弁の話だ。君の目には、何が見える？','見事だ。土と花は、持ち主を教えてくれる。'],
+ ['結論を急ぐ前に、一つだけ確かめておきたい。','ご名答。死は、彼の盾だったのだよ。'],
+ ['少し立ち止まろう。ここが肝心なところだ。','鋭いね。五分の謎は、そこで解ける。'],
+ ['投書について、君の考えを聞かせてくれたまえ。','その通り。道案内には、署名があった。'],
+ ['最後の仕上げの前に、もう一度だけ聞かせてくれ。','……君は、もう私の隣に座れるな。']
+];
+function midBeat(i){var m=MID[i];return {t:'c',lead:MIDT[i][0],q:m.q,opts:m.o.map(function(x){return {t:x[0],ok:!!x[1],r:x[1]?MIDT[i][1]:(x[2]||'')}})}}
 function midPick(j){
   var m=S.mid;if(!m)return;var o=m.opts[j];if(!o)return;
-  if(o.ok){S.mid=null;if(S.play)S.play.q.splice(S.play.i+1,0,{t:'h',ask:'【答え】'+o.t,s:'その通りだ。続けよう。'});next();return}
+  if(o.ok){S.mid=null;if(S.play)S.play.q.splice(S.play.i+1,0,{t:'h',ask:'【答え】'+o.t,s:o.r||'その通りだ。'});next();return}
   m.tried[j]=true;
   say({ask:'【答え】'+o.t,text:o.r});renderPanel();
 }
