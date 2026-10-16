@@ -252,11 +252,14 @@ button:focus-visible,.spot:focus-visible{outline:2px solid var(--lamp);outline-o
 .pro-text p:nth-child(5){animation-delay:3.6s}.pro-text p:nth-child(6){animation-delay:4.5s}.pro-text p:nth-child(7){animation-delay:5.4s}
 .pro-text p:nth-child(2){animation-delay:.9s}.pro-text p:nth-child(3){animation-delay:1.8s}.pro-text p:nth-child(4){animation-delay:2.7s}
 .pro-text em{font-style:normal;color:var(--lamp)}
+.pro-note{margin:0 0 10px;font-size:12px;color:var(--muted);text-align:center;min-height:1em}
 .pro-btns{display:flex;justify-content:space-between;gap:12px}
 .pro-skip{height:48px;padding:0 16px;background:none;border:1px solid var(--line);border-radius:3px;color:var(--muted);font-size:13px}
 .pro-next{flex:1;height:48px;border:0;border-radius:3px;background:var(--lamp);color:var(--ink);font:700 16px var(--f-serif);letter-spacing:.2em}
 @media (prefers-reduced-motion:reduce){.pro-text p{animation:none}}
 @media (max-height:640px){#dialog{min-height:186px}.said{font-size:16px}}
+@media (max-height:720px){#scene{max-height:24dvh}#dialog{min-height:182px}.said{font-size:15.5px;line-height:1.65}.said.narr{font-size:14px}.who{margin-bottom:2px}#favor{padding:3px 16px}}
+@media (max-height:600px){#scene{max-height:20dvh}#dialog{min-height:176px}.said{font-size:15px}}
 @media (prefers-reduced-motion:reduce){
   #room,#head{transition:none}
   #room .glow,.spot .ring,.row.final:not(:disabled){animation:none}
@@ -412,6 +415,7 @@ button:focus-visible,.spot:focus-visible{outline:2px solid var(--lamp);outline-o
     <div class="pro-card">
       <div class="pro-no" id="proNo"></div>
       <div class="pro-text" id="proText"></div>
+      <p class="pro-note" id="proNote"></p>
       <div class="pro-btns"><button class="pro-skip" id="proSkip">スキップ</button><button class="pro-next" id="proNext">次へ ▶</button></div>
     </div>
   </div>
@@ -632,7 +636,7 @@ var DIG={
  alibi:'……ところで、手紙の字というのは、人より正直に喋るものだ。ウィギンズ、あの少年たちの頭目の字は、蟹が歩いたようでね。だから、乱れた字で「ウィギンズ」と署名されれば、疑いもせず信じてしまう。探偵が一番騙されやすいのは、自分の得意分野でね。覚えておきたまえ。',
  know:'索引帳は私の脳の外付けでね。……ああ、君が中を覗いたことは咎めない。むしろ、誰も読まない「ヴ」の項を読んでくれて光栄だ。',
  poison:'アコニチンの話が出たついでにだが、あの毒は舌を痺れさせ、手足を冷やす。被害者は苦しんだだろうか。……いや、容疑者の私が気にするのは筋違いか。',
- visitor:'ダン氏の名刺には、「J.ダン」とだけあった。職業欄が空白だったのが、いま思えば不自然だ。頬髯も、手入れが悪いのか艶がなかった。些末と片づけたことを後で悔やむのは、私の悪い癖でね。',
+ visitor:'ダン氏の名刺には、「J.ダン」とだけあった。職業欄が空白だったのが、いま思えば不自然だ。些末と片づけたことを後で悔やむのは、私の悪い癖でね。',
  ret:'暖炉の火は、夜通し絶やさなかった。冷えた部屋で死体と夜明けを待つのは、思ったほど悪くない。考えるには、静かでいい。'
 };
 var READS=[
@@ -722,7 +726,7 @@ var STEPS=[
    {src:'証拠1',ev:'e1',text:'21:40にホームズが外出した',ok:false,reply:'私が留守にした事実だ。だが、それは私の外出を示すだけで、夫人の留守を誰が知り得たかは語らない。'},
    {src:'調書',text:'ホームズは夫人の留守を知らなかった',ok:false,reply:'それは問いの前提だ。答えにするには、知っていた者を示す証拠が要る。',memo:'来客と留守の供述が崩れた後の真相。'}
   ],
-  react:['ダン氏だ。夫人が茶を淹れる十分間、私の居間に一人で残った男。名刺を些末と片づけたのは、私の失策でもある。あの灰色の頬髯は、いま思えば不自然に艶がなかった。覚えておきたまえ。','彼は夫人から留守を聞いた。手紙の送り主が夫人の留守を知っていた以上、送り主はダン氏か、ダン氏から話を聞いた者と考えるのが筋だ。'],
+  react:['ダン氏だ。夫人が茶を淹れる十分間、私の居間に一人で残った男。名刺を些末と片づけたのは、私の失策でもある。','彼は夫人から留守を聞いた。手紙の送り主が夫人の留守を知っていた以上、送り主はダン氏か、ダン氏から話を聞いた者と考えるのが筋だ。'],
   note:'手紙の送り主は、夫人の留守を知る「ダン氏」か、その関係者。',upd:['e4']},
  {q:'傘の男と、呼び出し状の送り主には、どんな関係があるだろう？',
   talk:['次に、私を外へ誘い出した偽の呼び出し状だ。そして、私が出た五分後に、傘の男が入っている。……問題は、この男がなぜ私の出る時刻を知っていたのか、ということだ。'],
@@ -940,6 +944,11 @@ function next(){
   if(p.i>=p.q.length){S.play=null;renderPanel();if(p.done)p.done();return}
   var b=p.q[p.i];
   if(b.fx)b.fx();
+  if(b.t==='c'){
+    S.mid={q:b.q,opts:shuffle(b.opts),tried:{}};
+    say({ask:'',text:b.lead});
+    renderPanel();return;
+  }
   say({ask:b.ask||'',text:b.s,narr:b.t==='n',note:b.note||''});
   renderPanel();
 }
@@ -980,6 +989,13 @@ function readOf(e){var l=S.white[e.id]||0;return l>=2&&e.w2?e.w2:(l>=1?e.white:e
 
 function askHtml(){
   var h='';
+  if(S.mid&&!pagesLeft()){
+    var m=S.mid;
+    h+='<div class="qcard"><div class="qtag">確認</div><div class="qtxt">'+m.q+'</div></div>';
+    m.opts.forEach(function(o,j){h+='<button class="opt'+(m.tried[j]?' tried':'')+'" data-act="mid" data-i="'+j+'"'+(m.tried[j]?' disabled':'')+'><span class="q">'+o.t+'</span></button>'});
+    return h;
+  }
+  if(S.mid)return '<button class="cont" data-act="pg">つづき ▶</button>';
   if(S.play)return '<button class="cont" data-act="next">つづき ▶</button>';
   if(pagesLeft())return '<button class="cont" data-act="pg">つづき ▶</button>';
   if(S.phase==='act1'){
@@ -1048,6 +1064,7 @@ function logHtml(){
   if(S.sumNotes){
     h+='<div class="sec">事件の整理</div>';
     S.sumNotes.forEach(function(t){h+='<div class="paper nb"><div class="ph"><span>刑事の整理</span></div>'+t+'</div>'});
+    h+='<div class="help"><button data-act="resum">取調べのまとめを読み返す</button></div>';
   }
   h+='<div class="sec">供述</div>';
   h+='<div class="prog"><span>聴取 '+ORDER.filter(function(k){return S.heard[k]}).length+' / '+ORDER.length+'</span><span>崩した嘘 '+n+' / '+ORDER.length+'</span></div>';
@@ -1212,7 +1229,7 @@ function startBridge(){
   S.phase='bridge';S.cx=null;
   S.sumNotes=['ホームズの嘘は、すべて「事件に先に気づいていた」ための沈黙だった。','誰かがホームズを誘い出し、その留守に毒を仕込み、被害者を呼んだ。','署名も小瓶のラベルも、ホームズの字に似せたもの。','証拠は揃いすぎている。'];
   renderPanel();
-  runPager({pages:summaryPages(),label:'取調べのまとめ',last:'ホームズの番へ',end:bridgeBeats,cls:'list'});
+  runPager({pages:summaryPages(),label:'取調べのまとめ',last:'ホームズの番へ',end:bridgeBeats,cls:'list',note:'スキップしても、調書タブの「事件の整理」と「取調べのまとめを読み返す」から、いつでも読み返せます。'});
 }
 function bridgeBeats(){
   var q='あなたが犯人にしては、証拠が揃いすぎている。……あなたは、この罠をどこまで見通しているのですか。';
@@ -1249,6 +1266,24 @@ function askQ(i){
   $('#askLine').textContent='【問い】'+STEPS[i].q;
   renderPanel();
 }
+var MID=[
+ {at:1,q:'この手紙の字は、何を示している？',o:[['書いたのは、左利きの人物かもしれない',1],['ホームズが右手で書いた',0,'私が書いたなら、字はこすれない。こすれているのは、書き手が私ではない手がかりだ。'],['インクが古いので、前日に書かれた',0,'インクの古さの話ではない。字が引きずられた向きの話だ。']]},
+ {at:1,q:'ダン氏は、なぜ夫人の留守を知っていたのか？',o:[['夫人が茶を運んだとき、本人から聞いた',1],['ホームズが教えた',0,'私は夫人の留守すら知らなかった。教えようがない。'],['夜警が教えた',0,'夜警は通りの記録係だ。居間の会話は知らない。']]},
+ {at:1,q:'呼び出した者と傘の男が、同じ計画の一部と言えるのは、なぜか？',o:[['呼び出しの内容と、玄関が開いていた現実が噛み合うから',1],['どちらも傘を持っていたから',0,'傘は傘の男だけの特徴だ。呼び出した者が持っていた証拠はない。'],['どちらも夜に動いたから',0,'夜に動く者は他にもいる。決め手は、手紙の「玄関は開けておく」と現実が噛み合うことだ。']]},
+ {at:1,q:'棚の瓶が満量で未開封だと、何が言える？',o:[['毒は、棚から持ち出されていない',1],['ホームズが毒を捨てた',0,'捨てたなら、瓶は減っている。満量で封も切っていないのだよ。'],['小瓶は、別の薬品だった',0,'中身の話ではない。棚から持ち出されたかどうかの話だ。']]},
+ {at:1,q:'黒い泥と紫の花弁から、どんな人物が浮かぶ？',o:[['園芸をする人物、特に温室を持つ者',1],['薬剤師',0,'花弁と土は、薬ではなく、育てる者の持ち物だ。'],['夜警',0,'夜警が歩くのは通りだ。花弁と土は、庭の話だよ。']]},
+ {at:1,q:'では、なぜ彼は「死んだ側」になったのか？',o:[['疑われる側の外に立てるから',1],['本当に事故で死んだから',0,'事故ではない。計画の一部だ。'],['ホームズを驚かせたかったから',0,'そんな遊びで命は賭けない。理由は、もっと現実的だ。']]},
+ {at:2,q:'ダン氏とヴァンス氏が同一人物なら、五分間の謎は説明がつくか？',o:[['馬車の中で変装を外せば、入れ替わりに見える',1],['双子の兄弟がいた',0,'兄弟の記録はない。馬車の中で変装を外した、それだけだ。'],['夜警が見間違えた',0,'夜警は正確だった。服装を見て、顔を見なかっただけだ。']]},
+ {at:1,q:'投書の差出人が被害者本人だと言えるのは、なぜか？',o:[['前日夕刻の消印と、左手の字が重なるから',1],['警察が自分で書いたから',0,'警察は、自分たちを導く投書は書かない。'],['ホームズが自分で出したから',0,'私が自分に不利な道案内を書くと思うかね。']]},
+ {at:3,q:'ここまでの話で、ヴァンスにとって死とは何だったのか？',o:[['破滅から逃れ、家族に金を残す、最後の取引',1],['衝動的な自殺',0,'衝動ではない。保険も毒の量も、計画の跡だ。'],['ホームズへの復讐',0,'復讐が目的なら、保険は要らない。目的は、逃げることと残すことだ。']]}
+];
+function midBeat(i){var m=MID[i];return {t:'c',lead:'……ここで、一度確認しよう。',q:m.q,opts:m.o.map(function(x){return {t:x[0],ok:!!x[1],r:x[2]||''}})}}
+function midPick(j){
+  var m=S.mid;if(!m)return;var o=m.opts[j];if(!o)return;
+  if(o.ok){S.mid=null;if(S.play)S.play.q.splice(S.play.i+1,0,{t:'h',ask:'【答え】'+o.t,s:'その通りだ。続けよう。'});next();return}
+  m.tried[j]=true;
+  say({ask:'【答え】'+o.t,text:o.r});renderPanel();
+}
 var CAT9={A:'死んで得るもの',B:'死ぬ意志の強さ',C:'私を選んだ理由'};
 function submit9(o){
   var st=STEPS[8];S.got9=S.got9||{};
@@ -1263,7 +1298,7 @@ function submit9(o){
     play(B,function(){askQ(8)});
   }else{
     B.push({t:'h',s:'三つの輪が揃った。……では、全貌を話そう。'});
-    st.react.forEach(function(r,i){var b={t:'h',s:r};if(i===0)b.fx=function(){S.notes.push(st.note)};B.push(b)});
+    st.react.forEach(function(r,i){var b={t:'h',s:r};if(i===0)b.fx=function(){S.notes.push(st.note)};B.push(b);if(i===MID[8].at-1)B.push(midBeat(8))});
     B.push({t:'h',s:'これで鎖は繋がった。全貌を話そう。聞き漏らしのないように。'});
     play(B,function(){showRecon()});
   }
@@ -1286,6 +1321,7 @@ function submit(){
     if(i===0&&!o.pre)b.ask='【提出】'+o.text;
     if(i===0)b.fx=function(){S.notes.push(st.note);st.upd.forEach(function(id){S.white[id]=Math.min((S.white[id]||0)+1,EVD[id].w2?2:1)});stampIt('推理',true)};
     B.push(b);
+    if(MID[a.i]&&i===MID[a.i].at-1)B.push(midBeat(a.i));
   });
   var nx=a.i+1;
   if(nx<STEPS.length){
@@ -1407,6 +1443,7 @@ function proShow(){
   var t=$('#proText');t.className='pro-text'+(pager.cls?' '+pager.cls:'');
   t.innerHTML=pg.map(function(x){return '<p>'+x+'</p>'}).join('');
   $('#proNext').textContent=pager.i===pager.pages.length-1?pager.last:'次へ ▶';
+  $('#proNote').textContent=pager.note||'';
 }
 function runPager(o){
   pager=o;pager.i=0;
@@ -1420,7 +1457,7 @@ $('#resumeBtn').addEventListener('click',resumeGame);
 $('#snd').addEventListener('click',function(e){e.stopPropagation();AU.muted=!AU.muted;try{localStorage.setItem('holmes-mute',AU.muted?'1':'0')}catch(x){}applyMute()});
 $('#proNext').addEventListener('click',function(){if(pager.i>=pager.pages.length-1)proEnd();else{pager.i++;proShow();$('#prologue').scrollTop=0}});
 $('#proSkip').addEventListener('click',proEnd);
-$('#dialog').addEventListener('click',function(){if(skipTyping())return;if(advancePage())return;if(S.play)next()});
+$('#dialog').addEventListener('click',function(){if(skipTyping())return;if(advancePage())return;if(S.mid)return;if(S.play)next()});
 $('#tabs').addEventListener('click',function(e){
   var b=e.target.closest('button[data-tab]');if(!b)return;
   S.tab=b.getAttribute('data-tab');renderPanel();$('#panel').scrollTop=0;
@@ -1429,8 +1466,9 @@ $('#panel').addEventListener('click',function(e){
   var b=e.target.closest('button[data-act]');
   if(!b||b.disabled||S.phase==='intro')return;
   var a=b.getAttribute('data-act'),id=b.getAttribute('data-id');
-  if(a==='next'){if(skipTyping())return;if(advancePage())return;next();return}
+  if(a==='next'){if(skipTyping())return;if(advancePage())return;if(S.mid)return;next();return}
   if(a==='pg'){if(!skipTyping())advancePage();return}
+  if(a==='mid'){midPick(+b.getAttribute('data-i'));return}
   if(S.play)return;
   if(a==='ask')doAsk(id);
   else if(a==='final'){S.directN=brokenN();startBridge()}
@@ -1446,6 +1484,7 @@ $('#panel').addEventListener('click',function(e){
   else if(a==='hint')hintFn();
   else if(a==='again')againFn();
   else if(a==='sum')sumFn();
+  else if(a==='resum')runPager({pages:summaryPages(),label:'取調べのまとめ',last:'閉じる',end:function(){renderPanel()},cls:'list',note:'いつでもここから読み返せます。'});
 });
 $('#sheet').addEventListener('click',function(e){
   if(e.target.id==='sheet'){closeSheet();return}
