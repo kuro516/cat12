@@ -395,7 +395,7 @@ button:focus-visible,.spot:focus-visible{outline:2px solid var(--lamp);outline-o
         </dl>
         <ul class="rules">
           <li>話題を選び、ホームズの証言を一文ずつ聞く。どこかに嘘が混じっている。</li>
-          <li>おかしな一文で「待った！」。証拠を突きつけて、嘘を崩す。</li>
+          <li>引っかかる一文で、証拠を突きつけて、嘘を崩す。</li>
           <li>五つの嘘をすべて崩すと、何かが変わる。</li>
           <li>外すと「心証」が減る。「手がかり」は何度使っても減らない。</li>
         </ul>
@@ -502,7 +502,7 @@ var ST={
     again:'現場を調べたことは認めた。それ以上、隠してはいない。'}
 };
 
-/* 前半の証言：一文ずつ聞き、嘘の一文に「待った」で証拠を突きつける */
+/* 前半の証言：一文ずつ聞き、嘘の一文に証拠を突きつける */
 var CX={
  alibi:{li:2,
   open:[
@@ -1021,13 +1021,13 @@ function askHtml(){
       }else{
         h+='<div class="qcard"><div class="qtag">証言　'+(cx.i+1)+' / '+len+'　'+sx.tag+'</div><div class="qtxt">嘘は、ここにあるか。一文ずつ聞き、おかしな一文に証拠を突きつける。</div></div>';
         if(n===0){
-          h+='<div class="coach"><b>はじめての人へ</b><ol><li>「次の証言」で、一文ずつ聞いていく。</li><li>事実と食い違いそうな一文で止まる。「〜ない」「一度も」の言い切りは怪しい。</li><li>「待った！」を押し、証拠の中身を確かめて「突きつける」。</li></ol>'+(cx.k==='alibi'?'<p>この話題は、夜警の記録が使えるはずだ。</p>':'')+'<p>外しても、ホームズが理由を教えてくれる。</p></div>';
+          h+='<div class="coach"><b>はじめての人へ</b><ol><li>「次の証言」で、一文ずつ聞いていく。</li><li>事実と食い違いそうな一文で止まる。「〜ない」「一度も」の言い切りは怪しい。</li><li>「いまの一文、引っかかる」を押し、証拠の中身を確かめて「突きつける」。</li></ol>'+(cx.k==='alibi'?'<p>この話題は、夜警の記録が使えるはずだ。</p>':'')+'<p>外しても、ホームズが理由を教えてくれる。</p></div>';
         }
-        h+='<button class="go" data-act="cxpresent">待った！　証拠を突きつける</button>';
+        h+='<button class="go" data-act="cxpresent">いまの一文、引っかかる</button>';
         h+='<div class="help"><button data-act="cxnext">▶ 次の証言</button><button data-act="cxprev">◀ 前の証言</button><button data-act="cxpress">詳しく聞く</button><button data-act="cxleave">この話題を切り上げる</button></div>';
       }
     }else{
-      h+='<p class="hint">話題を選ぶ。一文ずつ聞き、嘘の一文に「待った」をかける。</p>';
+      h+='<p class="hint">話題を選ぶ。一文ずつ聞き、嘘の一文で、証拠を突きつける。</p>';
       (S.topics||ORDER).forEach(function(k){
         var s=TP(k),b=S.broken[k],he=S.heard[k];
         h+=row('ask',k,s.tag,s.q,b?'崩した':(he?'聴取済':'未聴取'),b?'broken':(he?'heard':''),false);
@@ -1058,7 +1058,7 @@ function askHtml(){
 }
 function evHtml(){
   var h='';
-  h+='<p class="hint">'+(S.phase==='act1'?'証拠の中身を確かめる。突きつけるのは、証言を聞いている最中に「待った！」で。事件と関係ないものも混じっている。':'証拠は変わらない。変わったのは、その読み方だ。')+'</p>';
+  h+='<p class="hint">'+(S.phase==='act1'?'証拠の中身を確かめる。突きつけるのは、証言を聞いている最中に「いまの一文、引っかかる」で。事件と関係ないものも混じっている。':'証拠は変わらない。変わったのは、その読み方だ。')+'</p>';
   visibleEv().forEach(function(e){
     var w=!!S.white[e.id];
     h+='<button class="ev'+(w?' white':'')+'" data-act="ev" data-id="'+e.id+'"><span class="evno">証拠<span>'+e.n+'</span></span><span class="evb"><b>'+e.name+(e.id==='e9'&&S.phase==='act1'&&!S.seen9?'<span class="new">新</span>':'')+'</b><small>'+(w?'ホームズの読み：'+readOf(e):'刑事のメモ：'+e.memo)+'</small>'+evMark(e.id)+'</span></button>';
@@ -1138,7 +1138,7 @@ function cxPress(){
 function cxLeave(){S.cx=null;say({text:'ふむ。では別の話をしようか。',note:''});renderPanel()}
 function cxPresent(evId){
   var cx=S.cx,sx=TP(cx.k),c=sx.cx,e=EVD[evId];closeSheet();
-  var ask='「待った！」　証拠'+e.n+'「'+e.name+'」を、この一文に突きつけた。';
+  var ask='「いまの一文、引っかかる」　証拠'+e.n+'「'+e.name+'」を、この一文に突きつけた。';
   S.evBad=S.evBad||{};S.evOk=S.evOk||{};S.evNear=S.evNear||{};
   if(ST[cx.k]&&e.target===cx.k&&cx.i===c.li)S.evOk[evId]=1;
   else if(ST[cx.k]&&e.target===cx.k)S.evNear[evId]=1;
@@ -1202,7 +1202,7 @@ function openSheet(id){
       h+='<button class="go" data-act="pick" data-ev="'+id+'">この証拠を、この一文に突きつける</button>';
       h+='<button class="sh-close" data-act="backpick">他の証拠を見る</button>';
     }else{
-      h+='<div class="empty">証言を聞いている最中に「待った！」で突きつけられる。</div>';
+      h+='<div class="empty">証言を聞いている最中に「いまの一文、引っかかる」で突きつけられる。</div>';
     }
   }
   h+='<button class="sh-close" data-act="close">閉じる</button></div>';
