@@ -946,7 +946,7 @@ function next(){
   var b=p.q[p.i];
   if(b.fx)b.fx();
   if(b.t==='c'){
-    S.mid={q:b.q,opts:shuffle(b.opts),tried:{}};
+    S.mid={q:b.q,opts:shuffle(b.opts),tried:{},sel:-1};
     say({ask:'',text:b.lead});
     renderPanel();return;
   }
@@ -993,7 +993,11 @@ function askHtml(){
   if(S.mid&&!pagesLeft()){
     var m=S.mid;
     h+='<div class="qcard"><div class="qtag">確認</div><div class="qtxt">'+m.q+'</div></div>';
-    m.opts.forEach(function(o,j){h+='<button class="opt'+(m.tried[j]?' tried':'')+'" data-act="mid" data-i="'+j+'"'+(m.tried[j]?' disabled':'')+'><span class="q">'+o.t+'</span></button>'});
+    m.opts.forEach(function(o,j){
+      var sel=m.sel===j;
+      h+='<button class="opt'+(m.tried[j]?' tried':'')+(sel?' sel':'')+'" data-act="mid" data-i="'+j+'"'+(m.tried[j]?' disabled':'')+'><span class="q">'+o.t+'</span></button>';
+      if(sel)h+='<button class="go" data-act="midgo">この答えで確定する</button>';
+    });
     return h;
   }
   if(S.mid)return '<button class="cont" data-act="pg">つづき ▶</button>';
@@ -1290,8 +1294,9 @@ var MIDT=[
  ['最後の仕上げの前に、もう一度だけ聞かせてくれ。','……君は、もう私の隣に座れるな。']
 ];
 function midBeat(i){var m=MID[i];return {t:'c',lead:MIDT[i][0],q:m.q,opts:m.o.map(function(x){return {t:x[0],ok:!!x[1],r:x[1]?MIDT[i][1]:(x[2]||'')}})}}
+function midSel(j){var m=S.mid;if(!m||m.tried[j])return;m.sel=(m.sel===j?-1:j);renderPanel()}
 function midPick(j){
-  var m=S.mid;if(!m)return;var o=m.opts[j];if(!o)return;
+  var m=S.mid;if(!m)return;var o=m.opts[j];if(!o)return;m.sel=-1;
   if(o.ok){S.mid=null;if(S.play)S.play.q.splice(S.play.i+1,0,{t:'h',ask:'【答え】'+o.t,s:o.r||'その通りだ。'});next();return}
   m.tried[j]=true;
   say({ask:'【答え】'+o.t,text:o.r});renderPanel();
@@ -1480,7 +1485,8 @@ $('#panel').addEventListener('click',function(e){
   var a=b.getAttribute('data-act'),id=b.getAttribute('data-id');
   if(a==='next'){if(skipTyping())return;if(advancePage())return;if(S.mid)return;next();return}
   if(a==='pg'){if(!skipTyping())advancePage();return}
-  if(a==='mid'){midPick(+b.getAttribute('data-i'));return}
+  if(a==='mid'){midSel(+b.getAttribute('data-i'));return}
+  if(a==='midgo'){if(S.mid&&S.mid.sel>=0)midPick(S.mid.sel);return}
   if(S.play)return;
   if(a==='ask')doAsk(id);
   else if(a==='final'){S.directN=brokenN();startBridge()}
