@@ -106,6 +106,11 @@ button:focus-visible,.spot:focus-visible{outline:2px solid var(--lamp);outline-o
 .top .btn{background:var(--lamp);color:#1a1208}
 .top .btn2{margin-top:10px;background:none;color:var(--lamp);border:1.5px solid var(--lamp)}
 .top .best{color:#8d7c58}
+.top-line{margin:12px 0 0!important;font:500 13px/1.6 var(--f-serif);letter-spacing:.12em;color:#b3c0bd!important}
+.coach{margin:0 0 12px;padding:10px 12px;border:1px dashed #6b5a38;border-radius:3px;font-size:12.5px;line-height:1.7;color:var(--muted)}
+.coach b{color:var(--lamp);letter-spacing:.1em}
+.coach ol{margin:4px 0 4px;padding-left:1.3em}
+.coach p{margin:2px 0}
 .qgoal{margin-top:6px;font-size:12.5px;line-height:1.6;color:var(--muted)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .chip{padding:3px 9px;border:1px solid var(--line);border-radius:12px;font-size:12px;color:var(--muted)}
@@ -194,6 +199,11 @@ button:focus-visible,.spot:focus-visible{outline:2px solid var(--lamp);outline-o
 .sh-q{margin:14px 0 8px;font-size:12px;letter-spacing:.12em;color:var(--lamp)}
 .pick{display:block;width:100%;margin-bottom:8px;padding:10px 12px;text-align:left;background:var(--bg2);border:1px solid var(--line);border-radius:3px}
 .pick:disabled{opacity:.4;cursor:default}
+.evmks{display:flex;flex-wrap:wrap;gap:4px;margin:3px 0 2px}
+.evmk{font:600 10.5px/1 var(--f-ui);padding:3px 6px;border-radius:2px;border:1px solid var(--line);color:var(--muted)}
+.evmk.ok{color:#9fd3a6;border-color:#3f6b49}
+.evmk.near{color:var(--lamp);border-color:#6b5a38}
+.evmk.bad{color:#e08a7a;border-color:#7a4036}
 .pick .q{font:500 14.5px/1.6 var(--f-serif)}
 .pf{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:2px;font-size:12px;line-height:1.55;color:var(--muted)}
 .sh-close{display:block;width:100%;margin-top:6px;height:44px;background:none;border:1px solid var(--line);border-radius:3px;color:var(--muted);letter-spacing:.2em}
@@ -378,6 +388,7 @@ button:focus-visible,.spot:focus-visible{outline:2px solid var(--lamp);outline-o
           <li>話題を選び、ホームズの証言を一文ずつ聞く。どこかに嘘が混じっている。</li>
           <li>おかしな一文で「待った！」。証拠を突きつけて、嘘を崩す。</li>
           <li>五つの嘘をすべて崩すと、何かが変わる。</li>
+          <li>外すと「心証」が減る。「手がかり」は何度使っても減らない。</li>
         </ul>
         <button class="btn" id="startBtn">取調べを始める</button>
       </div>
@@ -390,6 +401,7 @@ button:focus-visible,.spot:focus-visible{outline:2px solid var(--lamp);outline-o
       <div class="top-body">
         <h1 class="top-title">容疑者シャーロック・ホームズ</h1>
         <button class="btn" id="topStart">はじめる</button>
+        <p class="best top-line">嘘に証拠をぶつけ、真相を暴け。</p>
         <button class="btn btn2" id="resumeBtn" hidden>つづきから</button>
         <p class="best" id="bestLine" hidden></p>
         <p class="best">途中経過は、この端末のブラウザに自動で保存されます。</p>
@@ -472,7 +484,7 @@ var ST={
     again:'棚の話は済んだ。小瓶は私のものではない。'},
   visitor:{tag:'来客と留守',ev:'e4',q:'最近、家を訪ねてきた人はいませんか。ハドソン夫人は昨夜どうしていましたか。',
     lie:'来客？ 近頃は閑古鳥でね。月曜も誰も来ていない。',
-    brk:'……夫人は妹さんの家だったのか。それは知らなかった。そう、月曜にダン氏という男が来たそうだ。名刺は見たが、迷い犬の件など些末だと片づけてしまった。見立てを誤ったと認めるのが癪で、黙っていたのさ。',
+    brk:'……夫人は妹さんの家だったのか。それは知らなかった。そう、月曜にダン氏という男が来たそうだ。名刺は見たが、迷い犬の件など些末だと片づけてしまった。灰色の頬髯が妙に艶のない男だったが、それも気に留めなかった。見立てを誤ったと認めるのが癪で、黙っていたのさ。',
     again:'それ以上は知らん。夫人の留守を知らなかったのは、私の落ち度だ。'},
   ret:{tag:'帰宅後',ev:'e5',q:'帰宅してから朝までのことを教えてください。',
     lie:'寝室に入った。居間には足を踏み入れていない。',
@@ -620,7 +632,7 @@ var DIG={
  alibi:'……ところで、手紙の字というのは、人より正直に喋るものだ。ウィギンズ、あの少年たちの頭目の字は、蟹が歩いたようでね。だから、乱れた字で「ウィギンズ」と署名されれば、疑いもせず信じてしまう。探偵が一番騙されやすいのは、自分の得意分野でね。覚えておきたまえ。',
  know:'索引帳は私の脳の外付けでね。……ああ、君が中を覗いたことは咎めない。むしろ、誰も読まない「ヴ」の項を読んでくれて光栄だ。',
  poison:'アコニチンの話が出たついでにだが、あの毒は舌を痺れさせ、手足を冷やす。被害者は苦しんだだろうか。……いや、容疑者の私が気にするのは筋違いか。',
- visitor:'ダン氏の名刺には、「J.ダン」とだけあった。職業欄が空白だったのが、いま思えば不自然だ。些末と片づけたことを後で悔やむのは、私の悪い癖でね。',
+ visitor:'ダン氏の名刺には、「J.ダン」とだけあった。職業欄が空白だったのが、いま思えば不自然だ。頬髯も、手入れが悪いのか艶がなかった。些末と片づけたことを後で悔やむのは、私の悪い癖でね。',
  ret:'暖炉の火は、夜通し絶やさなかった。冷えた部屋で死体と夜明けを待つのは、思ったほど悪くない。考えるには、静かでいい。'
 };
 var READS=[
@@ -710,7 +722,7 @@ var STEPS=[
    {src:'証拠1',ev:'e1',text:'21:40にホームズが外出した',ok:false,reply:'私が留守にした事実だ。だが、それは私の外出を示すだけで、夫人の留守を誰が知り得たかは語らない。'},
    {src:'調書',text:'ホームズは夫人の留守を知らなかった',ok:false,reply:'それは問いの前提だ。答えにするには、知っていた者を示す証拠が要る。',memo:'来客と留守の供述が崩れた後の真相。'}
   ],
-  react:['ダン氏だ。夫人が茶を淹れる十分間、私の居間に一人で残った男。名刺を些末と片づけたのは、私の失策でもある。','彼は夫人から留守を聞いた。手紙の送り主が夫人の留守を知っていた以上、送り主はダン氏か、ダン氏から話を聞いた者と考えるのが筋だ。'],
+  react:['ダン氏だ。夫人が茶を淹れる十分間、私の居間に一人で残った男。名刺を些末と片づけたのは、私の失策でもある。あの灰色の頬髯は、いま思えば不自然に艶がなかった。覚えておきたまえ。','彼は夫人から留守を聞いた。手紙の送り主が夫人の留守を知っていた以上、送り主はダン氏か、ダン氏から話を聞いた者と考えるのが筋だ。'],
   note:'手紙の送り主は、夫人の留守を知る「ダン氏」か、その関係者。',upd:['e4']},
  {q:'傘の男と、呼び出し状の送り主には、どんな関係があるだろう？',
   talk:['次に、私を外へ誘い出した偽の呼び出し状だ。そして、私が出た五分後に、傘の男が入っている。……問題は、この男がなぜ私の出る時刻を知っていたのか、ということだ。'],
@@ -855,7 +867,7 @@ var TIMELINE=[
 
 /* ---------- state ---------- */
 var S,TY=null;
-function fresh(){return{phase:'intro',tab:'ask',heard:{},broken:{},unlocked:{},play:null,a2:null,notes:[],white:{},wrong:0,sel:-1,pend:false,cx:null,miss:0,starts:0,pressN:0,prevN:0,readN:0,readUsed:{}}}
+function fresh(){return{phase:'intro',tab:'ask',heard:{},broken:{},unlocked:{},play:null,a2:null,notes:[],white:{},wrong:0,sel:-1,pend:false,cx:null,miss:0,evSeen:{},evBad:{},evOk:{},starts:0,pressN:0,prevN:0,readN:0,readUsed:{}}}
 S=fresh();
 function brokenN(){return ORDER.filter(function(k){return S.broken[k]}).length}
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
@@ -953,6 +965,16 @@ function updateSpots(){}
 function row(act,id,tag,text,state,cls,dis){
   return '<button class="row '+(cls||'')+'" data-act="'+act+'" data-id="'+id+'"'+(dis?' disabled':'')+'><span class="rt"><span class="tag">'+tag+'</span><span class="q">'+text+'</span></span><span class="st">'+state+'</span></button>';
 }
+function evMark(id){
+  var m=[];
+  if((S.evOk||{})[id])m.push('<span class="evmk ok">使用済・崩した</span>');
+  else{
+    if((S.evNear||{})[id])m.push('<span class="evmk near">この話題の証拠</span>');
+    if((S.evBad||{})[id])m.push('<span class="evmk bad">外れ×'+S.evBad[id]+'</span>');
+    if(!m.length&&(S.evSeen||{})[id])m.push('<span class="evmk seen">確認済</span>');
+  }
+  return m.length?'<span class="evmks">'+m.join('')+'</span>':'';
+}
 function visibleEv(){return EV.filter(function(e){return !e.locked||S.unlocked[e.id]}).sort(function(a,b){return a.n-b.n})}
 function readOf(e){var l=S.white[e.id]||0;return l>=2&&e.w2?e.w2:(l>=1?e.white:e.memo)}
 
@@ -972,6 +994,9 @@ function askHtml(){
         h+='<button class="cont" data-act="cxnext">証言を聞く ▶</button>';
       }else{
         h+='<div class="qcard"><div class="qtag">証言　'+(cx.i+1)+' / '+len+'　'+sx.tag+'</div><div class="qtxt">嘘は、ここにあるか。一文ずつ聞き、おかしな一文に証拠を突きつける。</div></div>';
+        if(n===0){
+          h+='<div class="coach"><b>はじめての人へ</b><ol><li>「次の証言」で、一文ずつ聞いていく。</li><li>事実と食い違いそうな一文で止まる。「〜ない」「一度も」の言い切りは怪しい。</li><li>「待った！」を押し、証拠の中身を確かめて「突きつける」。</li></ol>'+(cx.k==='alibi'?'<p>この話題は、夜警の記録が使えるはずだ。</p>':'')+'<p>外しても、ホームズが理由を教えてくれる。</p></div>';
+        }
         h+='<button class="go" data-act="cxpresent">待った！　証拠を突きつける</button>';
         h+='<div class="help"><button data-act="cxnext">▶ 次の証言</button><button data-act="cxprev">◀ 前の証言</button><button data-act="cxpress">詳しく聞く</button><button data-act="cxleave">この話題を切り上げる</button></div>';
       }
@@ -990,7 +1015,7 @@ function askHtml(){
     var chips='';
     if(a.i===8){chips='<div class="chips">'+Object.keys(CAT9).map(function(c){return '<span class="chip'+((S.got9||{})[c]?' on':'')+'">'+CAT9[c]+((S.got9||{})[c]?' ✓':'')+'</span>'}).join('')+'</div>'}
     h+='<div class="qcard"><div class="qtag">問い　'+(a.i+1)+' / '+STEPS.length+'</div><div class="qtxt">'+st.q+'</div><div class="qgoal">'+(st.goal||'')+'</div>'+chips+'</div>';
-    h+='<p class="hint">'+(a.i===8?'事実を一つずつ提出して、三つの輪を掛けていく。':'提出する事実を選ぶ。選ぶと、前半の読みを見直せる。証拠・調書のタブで、いつでも見返せる。')+'</p>';
+    h+='<p class="hint">'+(a.i===8?'事実を一つずつ提出して、三つの輪を掛けていく。<br>例）「保険金が家族に入る」は、死んで<b>得るもの</b>。「横領が露見しそう」は、死んで<b>逃れるもの</b>。どちらも「死んで得るもの」の輪に入る。同じ輪に二つ目を当てても、新しい輪は掛からない。':'提出する事実を選ぶ。選ぶと、前半の読みを見直せる。証拠・調書のタブで、いつでも見返せる。')+'</p>';
     a.opts.forEach(function(o,i){
       var tried=a.tried[i],sel=S.sel===i;
       h+='<button class="opt '+(sel?'sel':'')+(tried?' tried':'')+'" data-act="opt" data-i="'+i+'"><span class="src">'+(o.ev?evL(o.ev):o.src)+'</span><span class="q">'+o.text+'</span></button>';
@@ -999,7 +1024,7 @@ function askHtml(){
         h+='<div class="detail"><b>'+(o.ev?evL(o.ev)+'「'+EVD[o.ev].name+'」':o.src)+'</b>'+memo+'<button class="go" data-act="submit">この事実を提出する</button></div>';
       }
     });
-    h+='<div class="help"><button data-act="again">もう一度聞かせてほしい</button><button data-act="hint">手がかりを一つ（'+a.hint+' / 3）</button><button data-act="sum">ここまでを整理してほしい</button></div>';
+    h+='<div class="help"><button data-act="again">もう一度聞かせてほしい</button><button data-act="hint">手がかりを一つ（心証は減らない　'+a.hint+' / 3）</button><button data-act="sum">ここまでを整理してほしい</button></div>';
   }else if(S.phase==='act3'){
     h+='<div class="empty">取調べは終わった。</div>';
   }
@@ -1010,7 +1035,7 @@ function evHtml(){
   h+='<p class="hint">'+(S.phase==='act1'?'証拠の中身を確かめる。突きつけるのは、証言を聞いている最中に「待った！」で。事件と関係ないものも混じっている。':'証拠は変わらない。変わったのは、その読み方だ。')+'</p>';
   visibleEv().forEach(function(e){
     var w=!!S.white[e.id];
-    h+='<button class="ev'+(w?' white':'')+'" data-act="ev" data-id="'+e.id+'"><span class="evno">証拠<span>'+e.n+'</span></span><span class="evb"><b>'+e.name+(e.id==='e9'&&S.phase==='act1'&&!S.seen9?'<span class="new">新</span>':'')+'</b><small>'+(w?'ホームズの読み：'+readOf(e):'刑事のメモ：'+e.memo)+'</small></span></button>';
+    h+='<button class="ev'+(w?' white':'')+'" data-act="ev" data-id="'+e.id+'"><span class="evno">証拠<span>'+e.n+'</span></span><span class="evb"><b>'+e.name+(e.id==='e9'&&S.phase==='act1'&&!S.seen9?'<span class="new">新</span>':'')+'</b><small>'+(w?'ホームズの読み：'+readOf(e):'刑事のメモ：'+e.memo)+'</small>'+evMark(e.id)+'</span></button>';
   });
   return h;
 }
@@ -1087,6 +1112,10 @@ function cxLeave(){S.cx=null;say({text:'ふむ。では別の話をしようか�
 function cxPresent(evId){
   var cx=S.cx,sx=TP(cx.k),c=sx.cx,e=EVD[evId];closeSheet();
   var ask='「待った！」　証拠'+e.n+'「'+e.name+'」を、この一文に突きつけた。';
+  S.evBad=S.evBad||{};S.evOk=S.evOk||{};S.evNear=S.evNear||{};
+  if(ST[cx.k]&&e.target===cx.k&&cx.i===c.li)S.evOk[evId]=1;
+  else if(ST[cx.k]&&e.target===cx.k)S.evNear[evId]=1;
+  else S.evBad[evId]=(S.evBad[evId]||0)+1;
   if(!ST[cx.k]){
     say({ask:ask,text:pick(DPRESS),note:'この一文とは食い違っていない。'+miss()});
   }else if(e.target===cx.k&&cx.i===c.li){
@@ -1134,7 +1163,7 @@ function useEv(evId,stId){
 /* ---------- sheet ---------- */
 function openSheet(id){
   var e=EVD[id],h='',w=!!S.white[id];
-  if(id==='e9')S.seen9=true;
+  if(id==='e9')S.seen9=true;(S.evSeen=S.evSeen||{})[id]=true;
   h+='<div class="sheet-card"><div class="sh-t"><span class="evno">証拠<span>'+e.n+'</span></span><b>'+e.name+'</b></div>';
   h+='<div class="sh-k">事実</div><div class="sh-v">'+e.fact+'</div>';
   h+='<div class="sh-k">刑事のメモ</div><div class="sh-v'+(w?' old':'')+'">'+e.memo+'</div>';
@@ -1156,7 +1185,7 @@ var pickScroll=0;
 function openSheetPresent(keep){
   if(!keep)pickScroll=0;
   var h='<div class="sheet-card"><div class="sh-q">どの証拠を突きつける？　（タップで中身を確認してから突きつけられる）</div>';
-  visibleEv().forEach(function(e){h+='<button class="pick" data-act="pickview" data-ev="'+e.id+'"><span class="tag">証拠'+e.n+'</span><span class="q">'+e.name+'</span><span class="pf">'+e.fact+'</span></button>'});
+  visibleEv().forEach(function(e){h+='<button class="pick" data-act="pickview" data-ev="'+e.id+'"><span class="tag">証拠'+e.n+'</span><span class="q">'+e.name+'</span>'+evMark(e.id)+'<span class="pf">'+e.fact+'</span></button>'});
   h+='<button class="sh-close" data-act="close">やめる</button></div>';
   var sh=$('#sheet');sh.innerHTML=h;sh.hidden=false;
   var cd=sh.querySelector('.sheet-card');if(cd)cd.scrollTop=pickScroll;
@@ -1270,7 +1299,7 @@ function submit(){
 function hintFn(){
   var a=S.a2,st=STEPS[a.i];
   if(a.hint<3)a.hint++;
-  say({text:st.hints[a.hint-1],note:'手がかり '+a.hint+' / 3'});
+  say({text:st.hints[a.hint-1],note:'手がかり '+a.hint+' / 3　（使っても心証は減らない）'});
   renderPanel();
 }
 function againFn(){say({text:STEPS[S.a2.i].again})}
