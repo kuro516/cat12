@@ -116,6 +116,19 @@ button:focus-visible,.spot:focus-visible{outline:2px solid var(--lamp);outline-o
 .coach b{color:var(--lamp);letter-spacing:.1em}
 .coach ol{margin:4px 0 4px;padding-left:1.3em}
 .coach p{margin:2px 0}
+.clues{display:flex;flex-direction:column;gap:2px;margin:0 0 10px}
+.sus{display:grid;gap:8px;margin:0 0 6px}
+.scard{padding:10px 12px;border:1px solid var(--line);border-radius:3px;background:var(--bg2)}
+.scard.out{opacity:.45}
+.scard .nm{font:700 16px var(--f-serif)}
+.scard .rl{font-size:12px;color:var(--muted);margin-bottom:6px}
+.scard .why{font-size:12.5px;color:#e08a7a}
+.scard .go{margin-top:2px}
+.slots{display:flex;flex-direction:column;gap:6px;margin:0 0 10px}
+.slot{padding:8px 12px;border:1px dashed var(--line);border-radius:3px;font-size:14px;color:var(--muted);min-height:38px}
+.slot.fill{border-style:solid;color:var(--fg);background:var(--bg2)}
+.slot b{color:var(--lamp);font-size:12px;letter-spacing:.1em}
+.ocards{display:flex;flex-direction:column;gap:2px}
 .qgoal{margin-top:6px;font-size:12.5px;line-height:1.6;color:var(--muted)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .chip{padding:3px 9px;border:1px solid var(--line);border-radius:12px;font-size:12px;color:var(--muted)}
@@ -695,7 +708,7 @@ var EVD={};EV.forEach(function(e){EVD[e.id]=e});
   E.e6.fact='死因はトリカブト中毒。死亡は22時半〜0時半。致死量の十数倍が検出された。胃にブランデー。遺体は左手にグラスを握っていた。';
   E.e6.white='十数倍は、確実に死ぬための量だった可能性が高い。保険や温室の痕跡と重ねて読むべきだ。';
   E.e8.name='秘書フィンチの供述書';
-  E.e8.fact='ヴァンス氏は左利き。ハムステッドに温室を持ち、園芸が趣味。恰幅がよく、普段は髭を剃っている。二か月前、探偵風の男が商会の帳簿を聞いて回り、ヴァンス氏はそれ以来ホームズ氏を警戒していた。三日前、クロス氏に帳簿を調べられてからは、様子がおかしかった。帳簿には、鉄道債をめぐる説明のつかない穴があったという。クロス氏は「ホームズに相談する」と話していた。';
+  E.e8.fact='ヴァンス氏は左利き。ハムステッドに温室を持ち、園芸が趣味。恰幅がよく、普段は髭を剃っている。二か月前、探偵風の男が商会の帳簿を聞いて回り、ヴァンス氏はそれ以来ホームズ氏を警戒していた。三日前、クロス氏に帳簿を調べられてからは、様子がおかしかった。帳簿には、鉄道債をめぐる説明のつかない穴があったという。クロス氏は「ホームズに相談する」と話していた。共同経営者のクロス氏は左利きだが、痩せ型で、温室は持たない。秘書のフィンチ自身は右利きで、体格がよく、ヴァンス氏の温室を手伝っていた。';
   E.e8.memo='被害者の私的な事情。事件との関係はまだ見えない。';
   E.e8.white='左利き、庭の土、恰幅のよさ。すべてが被害者本人に揃う。';
 })();
@@ -847,6 +860,8 @@ STEPS[6].opts.push({src:'',ev:'e8',text:'ヴァンスは普段は髭を剃って
   ['ヴァンスは、なぜ死ぬ必要があったのか。そして、なぜホームズを選んだのか。','三つの輪を一つずつ掛ける。「死んで得るもの」「死ぬ意志の強さ」「私を選んだ理由」を示す事実を選ぶ。']
  ];
  STEPS.forEach(function(st,i){st.q=Q[i][0];st.goal=Q[i][1]});
+ STEPS[5].mode='sus';STEPS[5].goal='手がかりをタップして、当てはまらない人物を消していく。一人に絞れたら、指名する。';
+ STEPS[6].mode='order';STEPS[6].goal='夜警の記録を読み、起きた順に五つの出来事を並べる。';
 })();
 
 (function(){
@@ -1041,8 +1056,11 @@ function askHtml(){
     var chips='';
     if(a.i===8){chips='<div class="chips">'+Object.keys(CAT9).map(function(c){return '<span class="chip'+((S.got9||{})[c]?' on':'')+'">'+CAT9[c]+((S.got9||{})[c]?' ✓':'')+'</span>'}).join('')+'</div>'}
     h+='<div class="qcard"><div class="qtag">問い　'+(a.i+1)+' / '+STEPS.length+'</div><div class="qtxt">'+st.q+'</div><div class="qgoal">'+(st.goal||'')+'</div>'+chips+'</div>';
-    h+='<p class="hint">'+(a.i===8?'事実を一つずつ提出して、三つの輪を掛けていく。<br>例）「保険金が家族に入る」は、死んで<b>得るもの</b>。「横領が露見しそう」は、死んで<b>逃れるもの</b>。どちらも「死んで得るもの」の輪に入る。同じ輪に二つ目を当てても、新しい輪は掛からない。':'提出する事実を選ぶ。選ぶと、前半の読みを見直せる。証拠・調書のタブで、いつでも見返せる。')+'</p>';
-    a.opts.forEach(function(o,i){
+    if(st.mode)h+='';
+    else h+='<p class="hint">'+(a.i===8?'事実を一つずつ提出して、三つの輪を掛けていく。<br>例）「保険金が家族に入る」は、死んで<b>得るもの</b>。「横領が露見しそう」は、死んで<b>逃れるもの</b>。どちらも「死んで得るもの」の輪に入る。同じ輪に二つ目を当てても、新しい輪は掛からない。':'提出する事実を選ぶ。選ぶと、前半の読みを見直せる。証拠・調書のタブで、いつでも見返せる。')+'</p>';
+    if(st.mode==='sus')h+=susHtml(a);
+    else if(st.mode==='order')h+=ordHtml(a);
+    else a.opts.forEach(function(o,i){
       var tried=a.tried[i],sel=S.sel===i;
       h+='<button class="opt '+(sel?'sel':'')+(tried?' tried':'')+'" data-act="opt" data-i="'+i+'"><span class="src">'+(o.ev?evL(o.ev):o.src)+'</span><span class="q">'+o.text+'</span></button>';
       if(sel){
@@ -1272,9 +1290,61 @@ function askQ(i){
     return true;
   });
   S.a2={i:i,hint:0,tried:{},opts:shuffle(avail)};
+  if(STEPS[i].mode==='sus')S.a2.on={};
+  if(STEPS[i].mode==='order')S.a2.ord={cards:shuffle(ORD.map(function(x){return x.k})),seq:[]};
   S.sel=-1;S.pend=true;S.tab='ask';
   $('#askLine').textContent='【問い】'+STEPS[i].q;
   renderPanel();
+}
+var SUS=[
+ {k:'cross',name:'クロス',role:'共同経営者',ok:{left:1,big:0,hot:0},wrong:'クロス君は左利きだが、痩せ型だ。傘の男は恰幅がよかった。それに、彼は温室を持たない。手がかりを重ねたまえ。'},
+ {k:'finch',name:'フィンチ',role:'秘書',ok:{left:0,big:1,hot:1},wrong:'フィンチ君は右利きだ。左手で書かれた手紙は、彼の手では書けない。'},
+ {k:'vance',name:'ヴァンス',role:'被害者　今朝、居間で冷たくなっていた',ok:{left:1,big:1,hot:1}}
+];
+var CLUES=[
+ {k:'left',ev:'e7',t:'手紙は、左手で書かれている',no:{finch:'右利きだから消えた'}},
+ {k:'big',ev:'e1',t:'傘の男は、恰幅がよかった',no:{cross:'痩せ型だから消えた'}},
+ {k:'hot',ev:'e5',t:'現場の泥と花弁は、温室の土と花のものだ',no:{cross:'温室を持たないから消えた'}}
+];
+function susHtml(a){
+  var on=a.on||(a.on={}),h='';
+  h+='<p class="hint">手がかりをタップすると、当てはまらない人物が消える。人物は、いつでも指名できる。</p>';
+  h+='<div class="clues">'+CLUES.map(function(c){return '<button class="opt'+(on[c.k]?' sel':'')+'" data-act="susclue" data-k="'+c.k+'"><span class="src">'+evL(c.ev)+'</span><span class="q">'+c.t+'</span></button>'}).join('')+'</div>';
+  h+='<div class="sus">'+SUS.map(function(p){
+    var why=CLUES.filter(function(c){return on[c.k]&&!p.ok[c.k]}).map(function(c){return c.no[p.k]});
+    var out=why.length>0,tried=a.tried[p.k];
+    return '<div class="scard'+(out?' out':'')+'"><div class="nm">'+p.name+'</div><div class="rl">'+p.role+'</div>'+(out?'<div class="why">'+why[0]+'</div>':'<button class="go" data-act="suspick" data-k="'+p.k+'"'+(tried?' disabled':'')+'>この人物を指名する</button>')+'</div>';
+  }).join('')+'</div>';
+  return h;
+}
+function susPick(k){
+  var a=S.a2,p=SUS.filter(function(x){return x.k===k})[0];if(!p)return;
+  if(k==='vance'){finishStep({ev:'e8',text:'犯人は、被害者ヴァンス本人だ',ok:true,pre:'手がかりを重ねたね。残ったのは、一人だけだ。'});return}
+  a.tried[k]=true;
+  say({ask:'【指名】'+p.name,text:p.wrong,note:'この人物は、手がかりと食い違う。'+miss()});
+  renderPanel();
+}
+var ORD=[
+ {k:'hom',t:'ホームズが外出する'},
+ {k:'enter',t:'傘の男が入る'},
+ {k:'cab',t:'辻馬車が通りの向かいに停まる'},
+ {k:'exit',t:'傘の男が出て、辻馬車に乗る'},
+ {k:'gent',t:'山高帽の紳士が、辻馬車から降りて入る'}
+];
+function ordHtml(a){
+  var o=a.ord,h='';
+  h+='<p class="hint">五つの出来事を、起きた順にタップして並べる。時刻は夜警の記録に書いてある。</p>';
+  h+='<div class="slots">'+ORD.map(function(x,i){var k=o.seq[i],t=k?ORD.filter(function(y){return y.k===k})[0].t:'';return '<div class="slot'+(k?' fill':'')+'"><b>'+(i+1)+'番目</b>　'+(k?t:'　')+'</div>'}).join('')+'</div>';
+  h+='<div class="ocards">'+o.cards.filter(function(k){return o.seq.indexOf(k)<0}).map(function(k){var t=ORD.filter(function(y){return y.k===k})[0].t;return '<button class="opt" data-act="ordtap" data-k="'+k+'"><span class="q">'+t+'</span></button>'}).join('')+'</div>';
+  h+='<div class="help"><button data-act="ev" data-id="e1">夜警の記録を見る</button>'+(o.seq.length?'<button data-act="ordreset">並べ直す</button>':'')+'</div>';
+  if(o.seq.length===ORD.length)h+='<button class="go" data-act="ordgo">この順で提出する</button>';
+  return h;
+}
+function ordGo(){
+  var a=S.a2,o=a.ord,ok=o.seq.every(function(k,i){return ORD[i].k===k});
+  if(ok){finishStep({ev:'e1',text:'夜警の記録を、時刻の順に並べた',ok:true,pre:'順に並べると、辻馬車が輪の中心にいる。'});return}
+  say({ask:'【提出】'+o.seq.map(function(k){return ORD.filter(function(y){return y.k===k})[0].t}).join(' → '),text:'順序が違う。夜警の記録は、時刻で並んでいる。もう一度、読み直したまえ。',note:'時刻の流れが、記録と食い違っている。'+miss()});
+  o.seq=[];renderPanel();
 }
 var MID=[
  {at:1,q:'この手紙の字は、何を示している？',o:[['書いたのは、左利きの人物かもしれない',1],['ホームズが右手で書いた',0,'私が書いたなら、字はこすれない。こすれているのは、書き手が私ではない手がかりだ。'],['インクが古いので、前日に書かれた',0,'インクの古さの話ではない。字が引きずられた向きの話だ。']]},
@@ -1335,6 +1405,10 @@ function submit(){
     renderPanel();return;
   }
   if(a.i===8&&o.cat){submit9(o);return}
+  finishStep(o);
+}
+function finishStep(o){
+  var a=S.a2,st=STEPS[a.i];
   S.pend=false;S.sel=-1;
   var B=[];
   if(o.pre)B.push({t:'h',s:o.pre,ask:'【提出】'+o.text});
@@ -1493,6 +1567,11 @@ $('#panel').addEventListener('click',function(e){
   if(a==='mid'){midSel(+b.getAttribute('data-i'));return}
   if(a==='midgo'){if(S.mid&&S.mid.sel>=0)midPick(S.mid.sel);return}
   if(S.play)return;
+  if(a==='susclue'){var aa=S.a2;aa.on=aa.on||{};var kk=b.getAttribute('data-k');aa.on[kk]=!aa.on[kk];renderPanel();return}
+  if(a==='suspick'){susPick(b.getAttribute('data-k'));return}
+  if(a==='ordtap'){var o2=S.a2.ord,k2=b.getAttribute('data-k');if(o2.seq.indexOf(k2)<0)o2.seq.push(k2);renderPanel();return}
+  if(a==='ordreset'){S.a2.ord.seq=[];renderPanel();return}
+  if(a==='ordgo'){ordGo();return}
   if(a==='ask')doAsk(id);
   else if(a==='final'){S.directN=brokenN();startBridge()}
   else if(a==='ev')openSheet(id);
