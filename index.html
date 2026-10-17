@@ -860,7 +860,7 @@ STEPS[6].opts.push({src:'',ev:'e8',text:'ヴァンスは普段は髭を剃って
   ['ヴァンスは、なぜ死ぬ必要があったのか。そして、なぜホームズを選んだのか。','三つの輪を一つずつ掛ける。「死んで得るもの」「死ぬ意志の強さ」「私を選んだ理由」を示す事実を選ぶ。']
  ];
  STEPS.forEach(function(st,i){st.q=Q[i][0];st.goal=Q[i][1]});
- STEPS[5].mode='sus';STEPS[5].goal='手がかりをタップして、当てはまらない人物を消していく。一人に絞れたら、指名する。';
+ STEPS[5].mode='sus';STEPS[5].goal='ここまでの手がかりに、全部当てはまる人物を指名する。';
  STEPS[6].mode='order';STEPS[6].goal='夜警の記録を読み、起きた順に五つの出来事を並べる。';
 })();
 
@@ -1290,36 +1290,32 @@ function askQ(i){
     return true;
   });
   S.a2={i:i,hint:0,tried:{},opts:shuffle(avail)};
-  if(STEPS[i].mode==='sus')S.a2.on={};
+  if(STEPS[i].mode==='sus'){S.a2.susSel=null;S.a2.susOrder=shuffle(SUS.map(function(x){return x.k}))}
   if(STEPS[i].mode==='order')S.a2.ord={cards:shuffle(ORD.map(function(x){return x.k})),seq:[]};
   S.sel=-1;S.pend=true;S.tab='ask';
   $('#askLine').textContent='【問い】'+STEPS[i].q;
   renderPanel();
 }
 var SUS=[
- {k:'cross',name:'クロス',role:'共同経営者',ok:{left:1,big:0,hot:0},wrong:'クロス君は左利きだが、痩せ型だ。傘の男は恰幅がよかった。それに、彼は温室を持たない。手がかりを重ねたまえ。'},
- {k:'finch',name:'フィンチ',role:'秘書',ok:{left:0,big:1,hot:1},wrong:'フィンチ君は右利きだ。左手で書かれた手紙は、彼の手では書けない。'},
- {k:'vance',name:'ヴァンス',role:'被害者　今朝、居間で冷たくなっていた',ok:{left:1,big:1,hot:1}}
-];
-var CLUES=[
- {k:'left',ev:'e7',t:'手紙は、左手で書かれている',no:{finch:'右利きだから消えた'}},
- {k:'big',ev:'e1',t:'傘の男は、恰幅がよかった',no:{cross:'痩せ型だから消えた'}},
- {k:'hot',ev:'e5',t:'現場の泥と花弁は、温室の土と花のものだ',no:{cross:'温室を持たないから消えた'}}
+ {k:'cross',name:'クロス',role:'共同経営者',desc:'左利き。痩せ型。温室は持たない。',wrong:'クロス君は左利きだが、痩せ型だ。傘の男は恰幅がよかった。それに、彼は温室を持たない。泥と花弁の説明がつかないよ。'},
+ {k:'finch',name:'フィンチ',role:'秘書',desc:'右利き。体格がよい。ヴァンスの温室を手伝っていた。',wrong:'フィンチ君は右利きだ。左手で書かれた手紙は、彼の手では書けない。供述書を、もう一度読みたまえ。'},
+ {k:'vance',name:'ヴァンス',role:'被害者',desc:'左利き。恰幅がよい。ハムステッドに温室を持つ。'},
+ {k:'holmes',name:'ホームズ',role:'容疑者（本人）',desc:'右利き。取調べを受けている。',wrong:'……ほう、私を指名するのかね。取調べを受ける側が、犯人を名指しされるとは光栄だ。だが、手紙は左手で書かれている。私は右利きだ。それに、傘の男が入った時、私はもうホワイトチャペルの霧の中にいた。夜警の記録を、見直したまえ。'}
 ];
 function susHtml(a){
-  var on=a.on||(a.on={}),h='';
-  h+='<p class="hint">手がかりをタップすると、当てはまらない人物が消える。人物は、いつでも指名できる。</p>';
-  h+='<div class="clues">'+CLUES.map(function(c){return '<button class="opt'+(on[c.k]?' sel':'')+'" data-act="susclue" data-k="'+c.k+'"><span class="src">'+evL(c.ev)+'</span><span class="q">'+c.t+'</span></button>'}).join('')+'</div>';
-  h+='<div class="sus">'+SUS.map(function(p){
-    var why=CLUES.filter(function(c){return on[c.k]&&!p.ok[c.k]}).map(function(c){return c.no[p.k]});
-    var out=why.length>0,tried=a.tried[p.k];
-    return '<div class="scard'+(out?' out':'')+'"><div class="nm">'+p.name+'</div><div class="rl">'+p.role+'</div>'+(out?'<div class="why">'+why[0]+'</div>':'<button class="go" data-act="suspick" data-k="'+p.k+'"'+(tried?' disabled':'')+'>この人物を指名する</button>')+'</div>';
+  var h='';
+  h+='<p class="hint">ここまでの手がかりを思い出すか、証拠・調書のタブで見返して、全部に当てはまる人物を一人選ぶ。選んだあと、「指名する」で確定する。</p>';
+  var order=a.susOrder||SUS.map(function(x){return x.k});
+  h+='<div class="sus">'+order.map(function(k){
+    var p=SUS.filter(function(x){return x.k===k})[0],tried=a.tried[k],sel=a.susSel===k;
+    return '<button class="opt'+(sel?' sel':'')+(tried?' tried':'')+'" data-act="suscard" data-k="'+k+'"'+(tried?' disabled':'')+'><span class="src">'+p.role+'</span><span class="q"><b>'+p.name+'</b></span></button>'+(sel?'<button class="go" data-act="suspick">この人物を指名する</button>':'');
   }).join('')+'</div>';
   return h;
 }
-function susPick(k){
-  var a=S.a2,p=SUS.filter(function(x){return x.k===k})[0];if(!p)return;
-  if(k==='vance'){finishStep({ev:'e8',text:'犯人は、被害者ヴァンス本人だ',ok:true,pre:'手がかりを重ねたね。残ったのは、一人だけだ。'});return}
+function susPick(){
+  var a=S.a2,k=a.susSel,p=SUS.filter(function(x){return x.k===k})[0];if(!p)return;
+  a.susSel=null;
+  if(k==='vance'){finishStep({ev:'e8',text:'犯人は、被害者ヴァンス本人だ',ok:true,pre:'三つの特徴を重ねたね。残ったのは、一人だけだ。'});return}
   a.tried[k]=true;
   say({ask:'【指名】'+p.name,text:p.wrong,note:'この人物は、手がかりと食い違う。'+miss()});
   renderPanel();
@@ -1567,8 +1563,8 @@ $('#panel').addEventListener('click',function(e){
   if(a==='mid'){midSel(+b.getAttribute('data-i'));return}
   if(a==='midgo'){if(S.mid&&S.mid.sel>=0)midPick(S.mid.sel);return}
   if(S.play)return;
-  if(a==='susclue'){var aa=S.a2;aa.on=aa.on||{};var kk=b.getAttribute('data-k');aa.on[kk]=!aa.on[kk];renderPanel();return}
-  if(a==='suspick'){susPick(b.getAttribute('data-k'));return}
+  if(a==='suscard'){var aa=S.a2,kk=b.getAttribute('data-k');aa.susSel=(aa.susSel===kk?null:kk);renderPanel();return}
+  if(a==='suspick'){susPick();return}
   if(a==='ordtap'){var o2=S.a2.ord,k2=b.getAttribute('data-k');if(o2.seq.indexOf(k2)<0)o2.seq.push(k2);renderPanel();return}
   if(a==='ordreset'){S.a2.ord.seq=[];renderPanel();return}
   if(a==='ordgo'){ordGo();return}
